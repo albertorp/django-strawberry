@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: django-strawberry
-Version: 0.1.1
+Version: 0.1.2
 Summary: Reusable Django CRUD app with extra features, based on Neapolitan and integrating django-tables2
 Author: Alberto Rodriguez
 License: MIT

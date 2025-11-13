@@ -1,0 +1,2 @@
+recursive-include strawberry/templates *.html
+recursive-include strawberry/static *
