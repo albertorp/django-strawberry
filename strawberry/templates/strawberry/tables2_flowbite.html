@@ -1,0 +1,201 @@
+{% load django_tables2 %}
+{% load i18n l10n %}
+{% block table-wrapper %}
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg w-full">
+
+  {# ---------- TOP PAGINATION & PAGE SIZE ---------- #}
+  {% block pagination_top %}
+  {% if table.page and table.paginator.num_pages > 1 %}
+  <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
+    
+    <!-- Items per page selector -->
+    <form method="get" class="flex items-center gap-2">
+      <label for="page_size" class="text-sm font-medium text-gray-700 whitespace-nowrap">
+        Items per page:
+      </label>
+      <select id="page_size" name="page_size"
+              class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-20 p-1.5"
+              onchange="this.form.submit()">
+        <option value="5" {% if request.GET.page_size == '5' %}selected{% endif %}>5</option>
+        <option value="10" {% if request.GET.page_size == '10' or not request.GET.page_size %}selected{% endif %}>10</option>
+        <option value="25" {% if request.GET.page_size == '25' %}selected{% endif %}>25</option>
+        <option value="50" {% if request.GET.page_size == '50' %}selected{% endif %}>50</option>
+      </select>
+      {% for key, value in request.GET.items %}
+        {% if key != 'page_size' %}
+          <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endif %}
+      {% endfor %}
+    </form>
+
+    <!-- Pagination controls -->
+    <nav class="inline-flex rounded-md shadow-sm isolate" aria-label="Pagination">
+      {% if table.page.has_previous %}
+      {% block pagination_top.previous %}
+      <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}"
+         class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-100">
+        &laquo; {% trans 'previous' %}
+      </a>
+      {% endblock pagination_top.previous %}
+      {% endif %}
+
+      {% block pagination_top.range %}
+      {% for p in table.page|table_page_range:table.paginator %}
+      <a {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}
+         class="px-3 py-1.5 text-sm font-medium border border-gray-300 {% if table.page.number == p %}bg-blue-50 text-blue-700{% else %}bg-white text-gray-700 hover:bg-gray-100{% endif %}">
+        {{ p }}
+      </a>
+      {% endfor %}
+      {% endblock pagination_top.range %}
+
+      {% if table.page.has_next %}
+      {% block pagination_top.next %}
+      <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}"
+         class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-100">
+        {% trans 'next' %} &raquo;
+      </a>
+      {% endblock pagination_top.next %}
+      {% endif %}
+    </nav>
+  </div>
+  {% endif %}
+  {% endblock pagination_top %}
+
+
+  {# ---------- MAIN TABLE ---------- #}
+  {% block table %}
+  <table {% render_attrs table.attrs class="w-full text-sm text-left text-gray-500 border-t border-gray-200" %}>
+    {% block table.thead %}
+    {% if table.show_header %}
+    <thead class="text-xs uppercase bg-gray-100 text-gray-700">
+      <tr>
+        {% for column in table.columns %}
+        <th {{ column.attrs.th.as_html }}
+            scope="col"
+            class="px-4 py-3 font-semibold {% if forloop.last %}text-right{% endif %}">
+          {% if column.orderable %}
+          <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}"
+             class="inline-flex items-center gap-1 hover:text-blue-600">
+            {{ column.header }}
+            {% if column.is_ordered %}
+              {% if column.order_by_alias.is_descending %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline-block text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 011.08 1.04l-4.24 4.5a.75.75 0 01-1.08 0l-4.24-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+                </svg>
+              {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline-block text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M14.77 12.79a.75.75 0 01-1.06-.02L10 8.832l-3.71 3.938a.75.75 0 11-1.08-1.04l4.24-4.5a.75.75 0 011.08 0l4.24 4.5a.75.75 0 01-.02 1.06z" clip-rule="evenodd"/>
+                </svg>
+              {% endif %}
+            {% endif %}
+          </a>
+          {% else %}
+          {{ column.header }}
+          {% endif %}
+        </th>
+        {% endfor %}
+      </tr>
+    </thead>
+    {% endif %}
+    {% endblock table.thead %}
+
+
+    {% block table.tbody %}
+    <tbody>
+      {% for row in table.paginated_rows %}
+      <tr class="border-b hover:bg-gray-50">
+        {% for column, cell in row.items %}
+        <td {{ column.attrs.td.as_html }}
+            class="px-4 py-3 text-gray-700 {% if forloop.last %}text-right flex justify-end{% endif %}">
+          {% if column.localize == None %}
+            {{ cell }}
+          {% else %}
+            {% if column.localize %}
+              {{ cell|localize }}
+            {% else %}
+              {{ cell|unlocalize }}
+            {% endif %}
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% empty %}
+      {% if table.empty_text %}
+      <tr>
+        <td colspan="{{ table.columns|length }}" class="text-center text-gray-500 py-6">
+          {{ table.empty_text }}
+        </td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+    {% endblock table.tbody %}
+
+
+    {% block table.tfoot %}
+    {% if table.has_footer %}
+    <tfoot class="bg-gray-50 border-t">
+      <tr>
+        {% for column in table.columns %}
+        <td {{ column.attrs.tf.as_html }} class="px-4 py-2 font-medium text-gray-600">
+          {{ column.footer }}
+        </td>
+        {% endfor %}
+      </tr>
+    </tfoot>
+    {% endif %}
+    {% endblock table.tfoot %}
+  </table>
+  {% endblock table %}
+
+
+  {# ---------- BOTTOM PAGINATION (same as top) ---------- #}
+  {% block pagination %}
+  {% if table.page and table.paginator.num_pages > 1 %}
+  <div class="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3">
+
+    <form method="get" class="flex items-center gap-2">
+      <label for="page_size_bottom" class="text-sm font-medium text-gray-700 whitespace-nowrap">
+        Items per page:
+      </label>
+      <select id="page_size_bottom" name="page_size"
+              class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-20 p-1.5"
+              onchange="this.form.submit()">
+        <option value="5" {% if request.GET.page_size == '5' %}selected{% endif %}>5</option>
+        <option value="10" {% if request.GET.page_size == '10' or not request.GET.page_size %}selected{% endif %}>10</option>
+        <option value="25" {% if request.GET.page_size == '25' %}selected{% endif %}>25</option>
+        <option value="50" {% if request.GET.page_size == '50' %}selected{% endif %}>50</option>
+      </select>
+      {% for key, value in request.GET.items %}
+        {% if key != 'page_size' %}
+          <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endif %}
+      {% endfor %}
+    </form>
+
+    <nav class="inline-flex rounded-md shadow-sm isolate" aria-label="Pagination">
+      {% if table.page.has_previous %}
+      <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}"
+         class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-100">
+        &laquo; {% trans 'previous' %}
+      </a>
+      {% endif %}
+      {% for p in table.page|table_page_range:table.paginator %}
+      <a {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}
+         class="px-3 py-1.5 text-sm font-medium border border-gray-300 {% if table.page.number == p %}bg-blue-50 text-blue-700{% else %}bg-white text-gray-700 hover:bg-gray-100{% endif %}">
+        {{ p }}
+      </a>
+      {% endfor %}
+      {% if table.page.has_next %}
+      <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}"
+         class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-100">
+        {% trans 'next' %} &raquo;
+      </a>
+      {% endif %}
+    </nav>
+  </div>
+  {% endif %}
+  {% endblock pagination %}
+
+</div>
+{% endblock table-wrapper %}

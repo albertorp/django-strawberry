@@ -1,0 +1,54 @@
+{% extends "strawberry/base_strawberry.html" %}
+{% load i18n %}
+
+{% block app %}
+<section class="app-card">
+<h1 class="text-lg font-bold text-neutral">
+  {% if object %}Edit {{object_verbose_name}}{% else %}Create {{object_verbose_name}}{% endif %}
+</h1>
+
+<div>
+  <form method="POST" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}
+    action="{% if object %}{{ update_view_url }}{% else %}{{ create_view_url }}{% endif %}" class="dl-form my-4">
+    {% csrf_token %}
+
+    <!-- Fields -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    {% for field in form %}
+      <div class="form-control w-full">
+        <label class="label">
+          <span class="label-text font-semibold text-sm text-neutral">{{ field.label }}</span>
+          {% if field.field.required %}
+            <span class="label-text-alt text-error">*</span>
+          {% endif %}
+        </label>
+        {{ field }}
+        {% if field.help_text %}
+          <label class="label">
+            <span class="label-text-alt text-xs text-gray-500">{{ field.help_text }}</span>
+          </label>
+        {% endif %}
+        {% if field.errors %}
+          <label class="label">
+            <span class="label-text-alt text-error text-xs">{{ field.errors|join:", " }}</span>
+          </label>
+        {% endif %}
+      </div>
+    {% endfor %}
+    </div>
+
+    <!-- Buttons -->
+     {% if request.GET.next %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% endif %}
+    <button type="submit" class="btn btn-primary mt-4">
+      {% trans 'Save' %}
+    </button>
+
+    <a href="{{ request.GET.next|default:list_view_url }}" class="btn mt-4 ml-2">
+      {% trans 'Cancel' %}
+    </a>
+  </form>
+</div>
+</section>
+{% endblock %}

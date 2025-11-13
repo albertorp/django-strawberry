@@ -34,6 +34,34 @@ class BaseCrudView(SingleTableMixin, CRUDView):
     form_multiselect_class = None # Each subview must define the form for multiselect behaviour that they want to implement
     table_class = None  # Each subview must define the table to be used
 
+
+    def get_template_names(self):
+        """
+        Returns a list of template names to use when rendering the response.
+
+        This is overriding the method to change the fallback folder from neapolitan/... to strawberry/...
+
+        If `.template_name` is not specified, uses the
+        "{app_label}/{model_name}{template_name_suffix}.html" model template
+        pattern, with the fallback to the
+        "strawberry/object{template_name_suffix}.html" default templates.
+        """
+        if self.template_name is not None:
+            return [self.template_name]
+
+        if self.model is not None and self.template_name_suffix is not None:
+            return [
+                f"{self.model._meta.app_label}/"
+                f"{self.model._meta.object_name.lower()}"
+                f"{self.template_name_suffix}.html",
+                f"strawberry/object{self.template_name_suffix}.html",
+            ]
+        msg = (
+            "'%s' must either define 'template_name' or 'model' and "
+            "'template_name_suffix', or override 'get_template_names()'"
+        )
+        raise ImproperlyConfigured(msg % self.__class__.__name__)
+
     def get_table_kwargs(self):
         kwargs = super().get_table_kwargs()
         kwargs['view'] = self

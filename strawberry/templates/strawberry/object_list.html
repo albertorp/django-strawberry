@@ -1,0 +1,65 @@
+{% extends "strawberry/base_strawberry.html" %}
+{#% load neapolitan %#}
+{% load render_table from django_tables2 %}
+
+{% load i18n %}
+
+
+{% block app %}
+
+<div x-data="{ recordId: null, recordName: '' }">
+
+{% include template_top_title %}
+
+{% if object_list %}
+    <div class="my-8 flow-root">
+        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                {% render_table table %}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <p class="mt-8">{% trans 'There are no' %} {{ object_verbose_name_plural }}. {% trans 'Create one now?' %}</p>
+{% endif %}
+
+<hr>
+
+{% if allow_delete %}
+{% include template_delete_modal %}
+{% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+
+<script>
+// This script implements the "Select All" functionality for the django-tables2 table
+document.addEventListener("DOMContentLoaded", function() {
+  // find the header checkbox (the one in <th>)
+  const headerCheckbox = document.querySelector("th input[type='checkbox']");
+  if (!headerCheckbox) return;
+
+  // find all row checkboxes (those in <td>)
+  const rowCheckboxes = document.querySelectorAll("td input[type='checkbox']");
+
+  // when header checkbox changes, toggle all row checkboxes
+  headerCheckbox.addEventListener("change", function() {
+    rowCheckboxes.forEach(cb => cb.checked = headerCheckbox.checked);
+  });
+
+  // optional: update header checkbox when all/none are selected
+  rowCheckboxes.forEach(cb => {
+    cb.addEventListener("change", function() {
+      const allChecked = Array.from(rowCheckboxes).every(x => x.checked);
+      const noneChecked = Array.from(rowCheckboxes).every(x => !x.checked);
+      headerCheckbox.indeterminate = !allChecked && !noneChecked;
+      headerCheckbox.checked = allChecked;
+    });
+  });
+});
+</script>
+
+{% endblock page_js%}

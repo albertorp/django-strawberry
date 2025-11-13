@@ -8,10 +8,7 @@ django_strawberry.egg-info/requires.txt
 django_strawberry.egg-info/top_level.txt
 strawberry/__init__.py
 strawberry/apps.py
-strawberry/filters.py
-strawberry/forms.py
-strawberry/models.py
 strawberry/tables.py
-strawberry/urls.py
 strawberry/views.py
 strawberry/templatetags/__init__.py
+strawberry/templatetags/strawberry.py
