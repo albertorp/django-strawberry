@@ -11,15 +11,15 @@ class BaseTable(tables.Table):
         verbose_name='',
     )
     actions = tables.TemplateColumn(
-            template_name="neapolitan/partial/object_actions.html",
+            template_name="strawberry/partial/object_actions.html",
             orderable=False, 
             verbose_name="Actions")
 
     class Meta:
         abstract = True
         sequence = ('selected', '...', 'actions') # Set in the base class to ensure the actions column is always at the end
-        template_name = "neapolitan/tables2_daisyui.html"
-        # template_name = "neapolitan/tables2_flowbite.html"
+        template_name = "strawberry/tables2_daisyui.html"
+        # template_name = "strawberry/tables2_flowbite.html"
 
     def __init__(self, *args, view=None, **kwargs):
             
@@ -50,7 +50,7 @@ class BaseTable(tables.Table):
         # Candidate list
         template_candidates = [
             f"{app_label}/partial/{model_name}_actions.html",
-            "neapolitan/partial/object_actions.html",
+            "strawberry/partial/object_actions.html",
         ]
 
         # ✅ Pick the first existing template as a string

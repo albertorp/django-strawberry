@@ -138,7 +138,7 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         # Candidate list
         template_candidates = [
             f"{app_label}/partial/{model_name}_{role}_{partial}.html",
-            f"neapolitan/partial/object_{role}_{partial}.html",
+            f"strawberry/partial/object_{role}_{partial}.html",
         ]
 
         # ✅ Pick the first existing template as a string

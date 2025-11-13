@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 
 
-@register.inclusion_tag("neapolitan/partial/detail.html")
+@register.inclusion_tag("strawberry/partial/detail.html")
 def object_detail(object, fields):
     """
     Renders a detail view of an object with the given fields.
@@ -12,7 +12,7 @@ def object_detail(object, fields):
 
         {% object_detail object fields %}
 
-    Template: ``neapolitan/partial/detail.html`` - Will render a table of the
+    Template: ``strawberry/partial/detail.html`` - Will render a table of the
     object's fields.
     """
 

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'neapolitan',
     'django_tables2',
+    'strawberry',
     'sampleapp',
 ]
 
