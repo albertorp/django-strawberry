@@ -1,0 +1,4 @@
+django>=5.0
+neapolitan>=0.0
+django-tables2>=2.5
+django-filter>=24.0

@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: django-strawberry
+Version: 0.1.0
+Summary: Reusable Django CRUD app with extra features, based on Neapolitan and integrating django-tables2
+Author: Alberto Rodriguez
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: django>=5.0
+Requires-Dist: neapolitan>=0.0
+Requires-Dist: django-tables2>=2.5
+Requires-Dist: django-filter>=24.0
+Dynamic: license-file
+
+# django-strawberry

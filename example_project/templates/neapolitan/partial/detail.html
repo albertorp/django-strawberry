@@ -1,0 +1,30 @@
+
+{% comment %}
+<dl class="divide-y divide-gray-100">
+{% for field, val in object %}
+<div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+    <dt class="text-sm font-medium leading-6 text-gray-900">{{ field|capfirst }}:</dt>
+    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ val }}</dd>
+</div>
+{% endfor %}
+</dl>
+{% endcomment %}
+
+
+<div class="overflow-x-auto my-4 rounded-box border border-base-200 shadow-sm bg-base-100">
+  <table class="table table-sm w-full">
+    <tbody>
+      {% for field, val in object %}
+        <tr class="hover:bg-base-200 transition-colors duration-150">
+          <th class="w-1/5 text-sm font-semibold text-primary capitalize align-top py-3 px-4">
+            {{ field }}
+          </th>
+          <td class="text-sm text-gray-800 py-3 px-4">
+            {{ val|default:"—" }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
