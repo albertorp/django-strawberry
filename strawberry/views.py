@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError, RestrictedError
+from django import forms
 from django.shortcuts import redirect
 from django.template.loader import select_template
 from django.urls import path, reverse
@@ -30,6 +31,13 @@ class BaseCrudView(SingleTableMixin, CRUDView):
 
     # Allow the user to select multiple rows
     allow_multiselect = False
+
+    # Populate any or all of these foo_fields to customize what is shown in each view
+    # If not specified, they will revert to the fields defined
+    list_fields = None
+    detail_fields = None
+    form_fields = None
+
 
     form_multiselect_class = None # Each subview must define the form for multiselect behaviour that they want to implement
     table_class = None  # Each subview must define the table to be used
@@ -103,6 +111,8 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         This is because with neapolitan and django-tables2 there were conflicts with the ordering and we were 
         getting exceptions
         """
+        self.fields = self.list_fields if self.list_fields else self.fields
+        
         table = self.get_table(view=self)
 
         RequestConfig(
@@ -125,7 +135,14 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         context[self.get_context_object_name(is_list=True)] = self.object_list
 
         return self.render_to_response(context)
+
+    def detail(self, request, *args, **kwargs):
+        self.fields = self.detail_fields if self.detail_fields else self.fields
+        return super().detail(request, *args, **kwargs)    
     
+    def show_form(self, request, *args, **kwargs):
+        self.fields = self.form_fields if self.form_fields else self.fields
+        return super().show_form(request, *args, **kwargs)
 
     def get_template_partial(self, role, partial):
         model = getattr(self, "model", None)
@@ -411,3 +428,112 @@ class BaseCrudView(SingleTableMixin, CRUDView):
 
         messages.success(self.request, msg)
         return result
+    
+
+    # date_input_classes = "input input-bordered w-full"
+    date_input_classes = ""
+    def get_form(self, data=None, files=None, **kwargs):
+        """
+        Overriding the get_form in order to add the date input to the form fields
+        """
+        
+        form = super().get_form(data=data, files=files, **kwargs)
+
+        for name, field in form.fields.items():
+            # Flowbite’s JS datepicker instead of native
+            if isinstance(field, forms.DateField):
+                # Select this one for a normal html5 datepicker. It does not allow to specify format
+                # field.widget = forms.DateInput(
+                #     attrs={
+                #         "type": "date",
+                #         "class": ""
+                #     }
+                # )
+                # Select this one for Flowbite
+                field.widget = forms.TextInput(
+                    attrs={
+                        # "class": "input input-bordered w-full",
+                        "datepicker": "",
+                        "datepicker-autohide": "",
+                        "datepicker-format": "yyyy-mm-dd",
+                    }
+                )
+
+            # elif isinstance(field, forms.DateTimeField):
+            #     widget_attrs["type"] = "datetime-local"
+            #     field.widget = forms.DateTimeInput(attrs=widget_attrs)
+
+        return form
+    
+
+
+
+
+class UserBaseCrudView(BaseCrudView):
+    """
+    This class will encapsulate all CRUD functionality for models that have a user field.
+    """
+
+    def get_form(self, data=None, files=None, **kwargs):
+        """
+        Overriding the get_form in order to remove the user field from it
+        """
+        form = super().get_form(data=data, files=files, **kwargs)
+        # Remove the field safely
+        form.fields.pop("user", None)
+        return form
+
+
+
+    def form_valid(self, form):
+        """
+        This adds the user to the form instance. 
+
+        TODO: Check what happens if we are editing the instance, rather than creating it
+        """
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        """Narrow queryset to only include objects of this user."""
+        return qs.filter(user=self.request.user)
+    
+    @classmethod
+    def delete_all_records(cls, request):
+        if request.method == 'POST':
+            try:
+                if cls.allow_delete_all:
+                    # Access the model class
+                    model = cls.model
+
+                    # Delete all records in the model
+                    model.objects.filter(user=request.user).delete()
+
+                    messages.success(request, _("All records have been deleted successfully."))
+                else:
+                    messages.warning(request, _("Deleting all records is not allowed."))
+            except Exception as e:
+                print(e)
+                messages.error(request, _("An error occurred while deleting records."))
+
+            # Construct the URL for redirection
+            app_name = model._meta.app_label
+            url = f'/{app_name}/{cls.url_base}'
+
+            # Redirect to the constructed URL
+            return redirect(url)
+        else:
+            messages.error(request, _("Invalid request method."))
+            return redirect('/')
+   
+
+    def get_change_multiple_form(self, **kwargs):
+        """
+        Returns a form instance for multiselect forms.
+        """
+        cls = self.get_change_multiple_form_class()
+        user=self.request.user
+        # add user to the kwargs
+        kwargs['user'] = user
+        return cls(**kwargs)
