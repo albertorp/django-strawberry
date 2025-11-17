@@ -10,6 +10,10 @@ from django.utils.decorators import classonlymethod
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
+import django_filters
+from django_filters.filterset import filterset_factory
+
+
 from neapolitan.views import CRUDView, Role
 from django_tables2.views import SingleTableMixin
 from django_tables2 import RequestConfig
@@ -37,6 +41,11 @@ class BaseCrudView(SingleTableMixin, CRUDView):
     list_fields = None
     detail_fields = None
     form_fields = None
+
+    allow_filter = True
+    filter_fields = None  # optional override in child views
+    filterset_class = None  # auto-generated if not provided
+
 
 
     form_multiselect_class = None # Each subview must define the form for multiselect behaviour that they want to implement
@@ -99,10 +108,15 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         Ensures Neapolitan's filtering is applied.
         """
         queryset = self.get_queryset()
-        filterset = self.get_filterset(queryset)
-        if filterset is not None:
-            queryset = filterset.qs
-        return queryset
+
+        if self.allow_filter:
+            FilterSetClass = self.get_filterset_class()
+            self.filter = FilterSetClass(self.request.GET, queryset=queryset)
+
+            return self.filter.qs
+        else:
+            return queryset
+    
 
     def list(self, request, *args, **kwargs):
         """
@@ -163,7 +177,81 @@ class BaseCrudView(SingleTableMixin, CRUDView):
 
         return resolved_template
 
+    def get_filterset_class(self):
+        """
+        Return an auto-generated FilterSet if none is explicitly set.
+        """
+        if not self.allow_filter:
+            return None
+        
+        if self.filterset_class:
+            return self.filterset_class
 
+        # Determine which fields to expose
+        if self.filter_fields:
+            allowed_fields = self.filter_fields
+        else:
+            # auto-detect all concrete fields
+            allowed_fields = [
+                f.name for f in self.model._meta.get_fields()
+                if hasattr(f, "attname")
+            ]
+
+        # Dynamically create a simple FilterSet
+        class AutoFilterSet(django_filters.FilterSet):
+            class Meta:
+                model = self.model
+                fields = {field: ["exact"] for field in allowed_fields}
+
+        return AutoFilterSet
+
+    def get_filterset(self, queryset=None):
+        """
+        Extend neapolitan's get_filterset to allow auto-generation
+        of a FilterSet when no filterset_class or filterset_fields
+        are explicitly defined.
+        """
+        # Keep original neapolitan logic first
+        filterset_class = getattr(self, "filterset_class", None)
+        filterset_fields = getattr(self, "filterset_fields", None)
+
+        # 1. If the view defines filterset_fields → use neapolitan factory
+        if filterset_class is None and filterset_fields:
+            filterset_class = filterset_factory(self.model, fields=filterset_fields)
+
+        # 2. If still no filterset_class → auto-generate one
+        if filterset_class is None:
+            # auto-select all concrete fields (or you can use self.filter_fields)
+            allowed_fields = getattr(self, "filter_fields", None)
+            if not allowed_fields:
+                allowed_fields = [
+                    f.name for f in self.model._meta.get_fields()
+                    if hasattr(f, "attname")
+                ]
+
+            class AutoFilterSet(django_filters.FilterSet):
+                class Meta:
+                    model = self.model
+                    fields = {field: ["exact"] for field in allowed_fields}
+
+            filterset_class = AutoFilterSet
+
+        # 3. If still no filterset (unlikely), stop here
+        if filterset_class is None:
+            return None
+
+        # 4. Build filterset instance using original neapolitan pattern
+        filterset = filterset_class(
+            self.request.GET,
+            queryset=queryset,
+            request=self.request,
+        )
+
+        # 5. Remove unwanted fields from the filter:
+        filterset.filters.pop("id", None)
+        filterset.filters.pop("created_at", None)
+
+        return filterset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -206,6 +294,12 @@ class BaseCrudView(SingleTableMixin, CRUDView):
             context["multiselect_url"] = self.multiselect_url
             # if self.role == Role.LIST:
             #     context['change_multiple_form'] = self.get_change_multiple_form()
+
+
+        filterset_class = self.get_filterset_class()
+        if filterset_class is not None:
+            filterset = self.get_filterset()
+            context['form_filter'] = filterset.form  
 
 
         return context
@@ -482,6 +576,15 @@ class UserBaseCrudView(BaseCrudView):
         # Remove the field safely
         form.fields.pop("user", None)
         return form
+    
+    def get_filterset(self, queryset=None):
+        # Let BaseCrudView build the filterset as usual
+        filterset = super().get_filterset(queryset=queryset)
+
+        if filterset is not None and "user" in filterset.filters:
+            filterset.filters.pop("user")
+
+        return filterset
 
 
 

@@ -39,6 +39,7 @@ class SampleModelView(UserBaseCrudView):
     fields = "__all__"
     detail_fields = ['name', 'date', 'email', 'phone', 'active', 'user']
     # form_fields = ['name', 'date', 'user']
+    filter_fields = ['name', 'date', 'active',]
 
     # filterset_class = SampleFilter
     # form_multiselect_class = SampleModelChangeMultipleForm
@@ -47,5 +48,6 @@ class SampleModelView(UserBaseCrudView):
     allow_delete_multiple = True
     allow_delete_all = True
     allow_multiselect = False
+    # allow_filter = False
 
     table_class = SampleModelTable
