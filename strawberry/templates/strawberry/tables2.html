@@ -106,7 +106,7 @@
       {% block table.tbody.row %}
       <tr {{ row.attrs.as_html }} class="hover">
         {% for column, cell in row.items %}
-        <td {{ column.attrs.td.as_html }} class="text-xs {% if forloop.last %}text-right flex justify-end{% endif %}">
+        <td {{ column.attrs.td.as_html }} class="text-xs align-middle {% if forloop.last %}text-right items-center{% endif %}">
           {% if column.localize == None %}
             {{ cell }}
           {% else %}
