@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 
@@ -82,4 +83,19 @@ class SampleModel(models.Model):
         Returns a human-readable version of the sample's status.
         """
         return self.STATUS_CHOICES[self.status - 1][1]
+    
+
+    """
+    This is only to test validation errors
+    """
+    # def clean(self):
+    #     super().clean()
+    #     non_field_errors = []
+
+    #     non_field_errors.append("Error A happened.")
+
+    #     non_field_errors.append("Error B happened.")
+
+    #     if non_field_errors:
+    #         raise ValidationError({"__all__": non_field_errors})
     
