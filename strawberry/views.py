@@ -585,6 +585,26 @@ class UserBaseCrudView(BaseCrudView):
             filterset.filters.pop("user")
 
         return filterset
+    
+
+    def get_form_kwargs(self):
+        """
+        This allows us to validate unique_together constraints where the user is affected, since without this, 
+        the user is not set at the moment the validation happens and hence we get an exception
+        """
+        kwargs = super().get_form_kwargs()
+
+        # Inject the user into the instance BEFORE form validation
+        if hasattr(self, "object") and self.object is not None:
+            # UpdateView / EditView case
+            self.object.user = self.request.user
+        else:
+            # CreateView case: instance lives inside kwargs["instance"]
+            instance = kwargs.get("instance")
+            if instance is not None:
+                instance.user = self.request.user
+
+        return kwargs
 
 
 

@@ -12,12 +12,8 @@
 {% include template_top_title %}
 
 {% if object_list %}
-    <div class="my-8 flow-root">
-        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {% render_table table %}
-            </div>
-        </div>
+    <div class="my-8">
+      {% render_table table %}
     </div>
 {% else %}
     <p class="mt-8">{% trans 'There are no' %} {{ object_verbose_name_plural }}. {% trans 'Create one now?' %}</p>

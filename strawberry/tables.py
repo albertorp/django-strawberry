@@ -18,7 +18,8 @@ class BaseTable(tables.Table):
     class Meta:
         abstract = True
         sequence = ('selected', '...', 'actions') # Set in the base class to ensure the actions column is always at the end
-        template_name = "strawberry/tables2_daisyui.html"
+        template_name = "strawberry/tables2.html"
+        # template_name = "strawberry/tables2_daisyui.html"
         # template_name = "strawberry/tables2_flowbite.html"
 
     def __init__(self, *args, view=None, **kwargs):
