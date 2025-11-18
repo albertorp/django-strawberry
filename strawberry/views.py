@@ -571,7 +571,21 @@ class UserBaseCrudView(BaseCrudView):
     def get_form(self, data=None, files=None, **kwargs):
         """
         Overriding the get_form in order to remove the user field from it
+
+        We also add the instance to the form including the user field from the request.
+        This allows us to validate unique_together constraints where the user is affected, since without this, 
+        the user is not set at the moment the validation happens and hence we get an exception
         """
+        instance = kwargs.get("instance")
+        # CREATE: no instance yet → create one with user pre-set
+        if instance is None:
+            instance = self.model(user=self.request.user)
+            kwargs["instance"] = instance
+        else:
+            # UPDATE: make sure user is correctly set
+            if hasattr(instance, "user") and instance.user_id is None:
+                instance.user = self.request.user
+
         form = super().get_form(data=data, files=files, **kwargs)
         # Remove the field safely
         form.fields.pop("user", None)
