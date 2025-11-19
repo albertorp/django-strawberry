@@ -35,8 +35,8 @@ class CountryView(BaseCrudView):
 
 class SampleModelView(UserBaseCrudView):
     model = SampleModel
-    # fields = ['name', 'date', 'email', 'status', 'active', 'country', 'user']
-    fields = "__all__"
+    fields = ['name', 'date', 'email', 'status', 'active', 'country']
+    # fields = "__all__"
     detail_fields = ['name', 'date', 'email', 'phone', 'active', 'user']
     # form_fields = ['name', 'date', 'user']
     filter_fields = ['name', 'date', 'active',]
@@ -50,4 +50,4 @@ class SampleModelView(UserBaseCrudView):
     allow_multiselect = False
     # allow_filter = False
 
-    table_class = SampleModelTable
+    # table_class = SampleModelTable

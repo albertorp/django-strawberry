@@ -16,8 +16,9 @@ from django_filters.filterset import filterset_factory
 
 from neapolitan.views import CRUDView, Role
 from django_tables2.views import SingleTableMixin
-from django_tables2 import RequestConfig
+from django_tables2 import RequestConfig, tables
 
+from .tables import BaseTable
 
 
 class BaseCrudView(SingleTableMixin, CRUDView):
@@ -558,6 +559,37 @@ class BaseCrudView(SingleTableMixin, CRUDView):
             #     field.widget = forms.DateTimeInput(attrs=widget_attrs)
 
         return form
+    
+
+    def get_table_class(self):
+        """
+        Automatically create a simple table if no explicit table_class is provided.
+        """
+        if self.table_class is not None:
+            return self.table_class
+
+        table_model = getattr(self, "model", None)
+        if self.model is None:
+            raise ImproperlyConfigured(
+                "No model defined on view, cannot auto-generate table_class."
+            )
+
+        # Choose fields: fields, list_fields, or all model fields
+        table_fields = (
+            getattr(self, "list_fields", None)
+            or getattr(self, "fields", None)
+        )
+
+        if table_fields == '__all__':
+            table_fields = None  # django-tables2 expects None for all fields
+
+        # Create a dynamic table inheriting your BaseTable
+        class AutoTable(BaseTable):
+            class Meta(BaseTable.Meta):
+                model = table_model
+                fields = table_fields
+
+        return AutoTable
     
 
 
