@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError, RestrictedError
@@ -593,8 +594,6 @@ class BaseCrudView(SingleTableMixin, CRUDView):
     
 
 
-
-
 class UserBaseCrudView(BaseCrudView):
     """
     This class will encapsulate all CRUD functionality for models that have a user field.
@@ -706,3 +705,17 @@ class UserBaseCrudView(BaseCrudView):
         # add user to the kwargs
         kwargs['user'] = user
         return cls(**kwargs)
+    
+
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def handle_no_permission(self):
+        messages.error(self.request, _("You must be a staff member to view this page."))
+        referer = self.request.META.get('HTTP_REFERER')
+        if referer:
+            return redirect(referer)
+
+        # Fallback to a safe default (e.g. '/')
+        return redirect('/')

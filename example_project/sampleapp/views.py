@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from strawberry.views import BaseCrudView, UserBaseCrudView
+from strawberry.views import BaseCrudView, UserBaseCrudView, StaffRequiredMixin
 from .models import Book, SampleModel, Country
 from .tables import BookTable, SampleModelTable, CountryTable
 
@@ -21,7 +21,7 @@ class BookView(BaseCrudView):
 
 
 
-class CountryView(BaseCrudView):
+class CountryView(StaffRequiredMixin, BaseCrudView):
     model = Country
     fields = ["name", "iso_code"]
     allow_delete = True
