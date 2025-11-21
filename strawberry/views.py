@@ -219,11 +219,19 @@ class BaseCrudView(SingleTableMixin, CRUDView):
                 if hasattr(f, "attname")
             ]
 
+        # Pick correct UI mixin
+        UiMixin = UI_MIXINS.get(UI.lower(), UI_MIXINS["default"])
+
+        # Build the filter form class
+        class AutoFilterForm(UiMixin, forms.Form):
+            pass
+
         # Dynamically create a simple FilterSet
         class AutoFilterSet(django_filters.FilterSet):
             class Meta:
                 model = self.model
                 fields = {field: ["exact"] for field in allowed_fields}
+                form = AutoFilterForm
 
         return AutoFilterSet
 
@@ -252,10 +260,18 @@ class BaseCrudView(SingleTableMixin, CRUDView):
                     if hasattr(f, "attname")
                 ]
 
+            # Pick correct UI mixin
+            UiMixin = UI_MIXINS.get(UI.lower(), UI_MIXINS["default"])
+
+            # Build the filter form class
+            class AutoFilterForm(UiMixin, forms.Form):
+                pass
+
             class AutoFilterSet(django_filters.FilterSet):
                 class Meta:
                     model = self.model
                     fields = {field: ["exact"] for field in allowed_fields}
+                    form = AutoFilterForm
 
             filterset_class = AutoFilterSet
 
