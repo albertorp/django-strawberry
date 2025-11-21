@@ -285,8 +285,9 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         context['template_top_actions'] = self.get_template_partial("list", "top_actions")
         context['template_list_filter'] = self.get_template_partial("list", "filter" )
         context['template_delete_modal'] = self.get_template_partial("delete", "modal")
+        context['template_delete_all_modal'] = self.get_template_partial("list", "delete_all_modal")
 
-        
+
 
 
         if self.allow_delete_all:

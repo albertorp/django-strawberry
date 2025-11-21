@@ -24,8 +24,15 @@
 
 {% if allow_delete %}
 {% include template_delete_modal %}
-
 {% endif %}
+
+
+
+{% if allow_delete_all %}
+{% include template_delete_all_modal %}
+{% endif %}
+
+
 
 </div>
 

@@ -1,0 +1,56 @@
+{% load i18n %}
+
+<div id="alert_delete_all_modal"
+     tabindex="-1"
+     aria-hidden="true"
+     class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto 
+            md:inset-0 h-[calc(100%-1rem)] max-h-full bg-gray-900 bg-opacity-50">
+
+    <div class="relative w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between p-4 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-error-600">
+                    {% trans "Confirm Deletion" %}
+                </h3>
+                <button type="button"
+                        class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5"
+                        data-modal-hide="alert_delete_all_modal">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-4 text-sm text-gray-700">
+                <p>
+                {% blocktrans with object_verbose_name_plural=object_verbose_name_plural|capfirst %}
+                    Are you sure you want to delete ALL 
+                    <span class="font-bold text-error-600">{{ object_verbose_name_plural }}</span>
+                    in the Database? This action cannot be undone.
+                {% endblocktrans %}
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center p-6 space-x-3 border-t">
+                <form method="post" action="{{ delete_all_url }}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="text-white bg-error-600 hover:bg-error-700 focus:ring-4 focus:ring-error-300 
+                                   font-medium rounded-lg text-sm px-5 py-2.5">
+                        {% trans 'Yes, I am sure' %}
+                    </button>
+                </form>
+
+                <button type="button"
+                        class="text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 
+                               font-medium rounded-lg text-sm px-5 py-2.5"
+                        data-modal-hide="alert_delete_all_modal">
+                    {% trans 'No, cancel' %}
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
