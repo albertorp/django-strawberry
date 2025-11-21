@@ -38,7 +38,7 @@ class SampleModelView(UserBaseCrudView):
     fields = ['name', 'date', 'email', 'status', 'active', 'country']
     # fields = "__all__"
     detail_fields = ['name', 'date', 'email', 'phone', 'active', 'user']
-    # form_fields = ['name', 'date', 'user']
+    form_fields = ['name', 'date', 'email', 'phone', 'active', 'description']
     filter_fields = ['name', 'date', 'active',]
 
     # filterset_class = SampleFilter

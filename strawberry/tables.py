@@ -3,7 +3,9 @@ from django.utils.safestring import mark_safe
 
 import django_tables2 as tables
 
-from .conf import UI
+from .conf import UI, checkbox_classes, UI_CHECKBOX_CLASSES
+
+    
 
 class BaseTable(tables.Table):
 
@@ -11,6 +13,9 @@ class BaseTable(tables.Table):
         accessor='pk',          # ✅ sets value to record.pk automatically
         orderable=False,
         verbose_name='',
+        attrs={
+            "th__input": {"class": checkbox_classes},
+        }
     )
     actions = tables.TemplateColumn(
             template_name=f"strawberry/{UI}/partial/object_actions.html",
@@ -76,10 +81,13 @@ class BaseTable(tables.Table):
         resolved_template = select_template(template_candidates).template.name
         self.base_columns["actions"].template_name = resolved_template
 
-
         self.template_list_change_multiple_modal = view.template_list_change_multiple_modal
         self.template_list_delete_multiple_modal = view.template_list_delete_multiple_modal
+
     
 
     def render_selected(self, value, record):
-        return mark_safe(f'<input type="checkbox" name="selected_objects" id="select-{record.pk}" value="{record.pk}">')
+        ui = UI.lower()
+        checkbox_classes = UI_CHECKBOX_CLASSES.get(ui, "")
+        return mark_safe(f'<input type="checkbox" name="selected_objects" id="select-{record.pk}" value="{record.pk}" class="{checkbox_classes}">')
+    

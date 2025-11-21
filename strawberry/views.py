@@ -21,6 +21,12 @@ from django_tables2 import RequestConfig, tables
 
 from .tables import BaseTable
 from .conf import UI
+from .forms_mixins import (
+    DefaultFormMixin,
+    DaisyUIFormMixin,
+    FlowbiteFormMixin,
+    UI_MIXINS,
+)
 
 
 class BaseCrudView(SingleTableMixin, CRUDView):
@@ -220,6 +226,7 @@ class BaseCrudView(SingleTableMixin, CRUDView):
                 fields = {field: ["exact"] for field in allowed_fields}
 
         return AutoFilterSet
+
 
     def get_filterset(self, queryset=None):
         """
@@ -542,40 +549,24 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         return result
     
 
-    # date_input_classes = "input input-bordered w-full"
-    date_input_classes = ""
-    def get_form(self, data=None, files=None, **kwargs):
+    def get_form_class(self):
         """
-        Overriding the get_form in order to add the date input to the form fields
+        Returns the automatically-generated ModelForm class
+        enhanced with the UI mixin (Flowbite/DaisyUI/Default).
         """
-        
-        form = super().get_form(data=data, files=files, **kwargs)
 
-        for name, field in form.fields.items():
-            # Flowbite’s JS datepicker instead of native
-            if isinstance(field, forms.DateField):
-                # Select this one for a normal html5 datepicker. It does not allow to specify format
-                # field.widget = forms.DateInput(
-                #     attrs={
-                #         "type": "date",
-                #         "class": ""
-                #     }
-                # )
-                # Select this one for Flowbite
-                field.widget = forms.TextInput(
-                    attrs={
-                        # "class": "input input-bordered w-full",
-                        "datepicker": "",
-                        "datepicker-autohide": "",
-                        "datepicker-format": "yyyy-mm-dd",
-                    }
-                )
+        base_form_class = super().get_form_class()
 
-            # elif isinstance(field, forms.DateTimeField):
-            #     widget_attrs["type"] = "datetime-local"
-            #     field.widget = forms.DateTimeInput(attrs=widget_attrs)
+        # Automatically choose mixin based on UI setting
+        mixin = UI_MIXINS.get(UI.lower(), DefaultFormMixin)
 
-        return form
+        # Compose a new form class dynamically
+        return type(
+            f"{self.model.__name__}AutoForm",
+            (mixin, base_form_class),
+            {}
+        )
+
     
 
     def get_table_class(self):

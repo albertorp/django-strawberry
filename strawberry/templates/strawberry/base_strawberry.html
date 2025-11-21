@@ -84,10 +84,41 @@
 
     <!-- Flowbite -->
     <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" />
-
-
+   
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+      /* Ensure the datepicker dropdown sits above everything */
+      .datepicker-dropdown {
+        z-index: 50; /* tweak if you have modals, etc. */
+      }
+
+      /* Main datepicker panel */
+      .datepicker-dropdown .datepicker-picker {
+        background-color: #ffffff;       /* solid white background */
+        color: #111827;                  /* gray-900 text */
+        border-radius: 0.5rem;           /* rounded corners */
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Optional: cells look nicer with hover feedback */
+      .datepicker-dropdown .datepicker-cell {
+        border-radius: 9999px; /* pill-like days */
+      }
+
+      .datepicker-dropdown .datepicker-cell.focused,
+      .datepicker-dropdown .datepicker-cell.selected {
+        background-color: #0F52BA; /* your primary */
+        color: #ffffff;
+      }
+
+      .datepicker-dropdown .datepicker-cell:hover:not(.selected):not(.disabled) {
+        background-color: #e5e7eb; /* gray-200 */
+      }
+    </style>
 
     
 </head>
@@ -125,14 +156,6 @@
 
     <!-- Main content -->
     <main class="flex-1 container mx-auto px-4 py-6">
-      <div class="bg-primary-500 text-white p-4">
-          TEST PRIMARY 500
-      </div>
-
-      <div class="bg-error-500 text-white p-4">
-          TEST ERROR
-      </div>
-
         {% block app %}
         {% endblock %}
     </main>
@@ -143,7 +166,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
-
     {% block page_js %}
     {% endblock %}
 
