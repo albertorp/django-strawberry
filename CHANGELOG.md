@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v0.1.12](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.12) - 2025-11-21
+
+<small>[Compare with v0.1.11](https://github.com/albertorp/django-strawberry/compare/v0.1.11...v0.1.12)</small>
+
+### Fixed
+
+- fix: added proper styling to the filter form ([cf75425](https://github.com/albertorp/django-strawberry/commit/cf7542536738420735565d33bd68af942c4ccffa) by Alberto Rodriguez Prieto).
+- fix: added proper styling to the form fields based on the ui selected ([1b5aa20](https://github.com/albertorp/django-strawberry/commit/1b5aa206d7b14ede6c9943203b1915b6d09ddef4) by Alberto Rodriguez Prieto).
+- fix: corrected the delete_all modal ([1190458](https://github.com/albertorp/django-strawberry/commit/11904587531c04e4efb5788e92b5ac2caa0d02d5) by Alberto Rodriguez Prieto).
+- fix: configured base template to define semantic colors for the example project ([4e995c6](https://github.com/albertorp/django-strawberry/commit/4e995c64b5b75bbbdf74ce6b9e5e7e1225985c57) by Alberto Rodriguez Prieto).
+
 ## [v0.1.11](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.11) - 2025-11-21
 
 <small>[Compare with v0.1.10](https://github.com/albertorp/django-strawberry/compare/v0.1.10...v0.1.11)</small>
