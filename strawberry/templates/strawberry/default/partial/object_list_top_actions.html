@@ -1,0 +1,57 @@
+{% load i18n %}
+
+
+<ul tabindex="-1" class="menu dropdown-content bg-base-200 rounded-box z-1 w-52 p-2 shadow-sm">
+    {% if allow_multiselect %}
+    <li>
+        <a class=""
+                onclick="change_multiple_modal.showModal()">
+            {% trans 'Change Multiple' %}
+        </a>
+    </li>
+    {% endif %}
+
+    {% if allow_delete_multiple %}
+     <li>
+        <a class="text-error hover:underline hover:text-error" onclick="alert_delete_multiple_modal.showModal()">
+            {% trans 'Delete Selected' %}
+        </a>
+    </li>
+    {% endif %}
+
+    {% if allow_delete_all %}
+    <li>
+        <a class="text-error hover:underline hover:text-error" onclick="alert_delete_all_modal.showModal()">
+            {% trans 'Delete All' %} {{ object_verbose_name_plural }}
+        </a>
+    </li>
+    {% endif %}
+</ul>
+
+{% if allow_delete_all %}
+<dialog id="alert_delete_all_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg text-error">{% trans "Confirm Deletion" %}</h3>
+
+    <p class="py-4">
+      {% blocktrans with object_verbose_name_plural=object_verbose_name_plural|capfirst %}
+        Are you sure you want to delete ALL 
+        <span class="font-bold text-error">{{ object_verbose_name_plural }}</span> 
+        in the Database? This action cannot be undone.
+      {% endblocktrans %}
+    </p>
+
+    <div class="modal-action">
+      <form method="post" action="{{ delete_all_url }}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-error">
+          {% trans 'Yes, I am sure' %}
+        </button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('alert_delete_all_modal').close()">
+          {% trans 'No, cancel' %}
+        </button>
+      </form>
+    </div>
+  </div>
+</dialog>
+{% endif %}

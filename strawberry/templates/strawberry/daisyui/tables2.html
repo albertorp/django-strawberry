@@ -149,11 +149,11 @@
 
 
   {% if table.view.allow_multiselect %}
-  {% include 'strawberry/partial/object_list_change_multiple_modal.html' %}
+  {% include table.template_list_change_multiple_modal %}
   {% endif %}
 
   {% if table.view.allow_delete_multiple %}
-  {% include 'strawberry/partial/object_list_delete_multiple_modal.html' %}
+  {% include table.template_list_delete_multiple_modal %}
   {% endif %}
 
   {% if table.view.allow_multiselect or table.view.allow_delete_multiple %}

@@ -1,0 +1,23 @@
+{% load i18n %}
+
+
+<!-- Delete Modal -->
+  <dialog x-ref="deletemodal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">{% trans 'Confirm Deletion' %}</h3>
+      <p class="py-4">
+        {% trans 'Are you sure you want to delete record ' %}
+        <span class="font-semibold text-error" x-text="recordName"></span>?
+      </p>
+
+      <form method="post" :action="`${ '{{ list_view_url }}' }${recordId}/delete/`">
+        {% csrf_token %}
+        <input type="hidden" name="record_id" :value="recordId">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <div class="modal-action">
+          <button type="submit" class="btn btn-error">{% trans 'Yes, delete' %}</button>
+          <button type="button" class="btn" @click="$refs.deletemodal.close()">{% trans 'Cancel' %}</button>
+        </div>
+      </form>
+    </div>
+  </dialog>

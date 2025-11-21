@@ -1,0 +1,96 @@
+{% load i18n %}
+
+<div class="z-10 w-52 bg-white rounded-lg shadow divide-y divide-gray-100">
+    <ul class="py-2 text-sm text-gray-700">
+        {% if allow_multiselect %}
+        <li>
+            <button type="button"
+                    data-modal-target="change_multiple_modal"
+                    data-modal-toggle="change_multiple_modal"
+                    class="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                {% trans 'Change Multiple' %}
+            </button>
+        </li>
+        {% endif %}
+
+        {% if allow_delete_multiple %}
+        <li>
+            <button type="button"
+                    data-modal-target="alert_delete_multiple_modal"
+                    data-modal-toggle="alert_delete_multiple_modal"
+                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 hover:text-red-700">
+                {% trans 'Delete Selected' %}
+            </button>
+        </li>
+        {% endif %}
+
+        {% if allow_delete_all %}
+        <li>
+            <button type="button"
+                    data-modal-target="alert_delete_all_modal"
+                    data-modal-toggle="alert_delete_all_modal"
+                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 hover:text-red-700">
+                {% trans 'Delete All' %} {{ object_verbose_name_plural }}
+            </button>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+
+
+{% if allow_delete_all %}
+<div id="alert_delete_all_modal"
+     tabindex="-1"
+     aria-hidden="true"
+     class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto 
+            md:inset-0 h-[calc(100%-1rem)] max-h-full bg-gray-900 bg-opacity-50">
+
+    <div class="relative w-full max-w-md max-h-full">
+        <div class="relative bg-white rounded-lg shadow">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between p-4 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-red-600">
+                    {% trans "Confirm Deletion" %}
+                </h3>
+                <button type="button"
+                        class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5"
+                        data-modal-hide="alert_delete_all_modal">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-4 text-sm text-gray-700">
+                <p>
+                {% blocktrans with object_verbose_name_plural=object_verbose_name_plural|capfirst %}
+                    Are you sure you want to delete ALL 
+                    <span class="font-bold text-red-600">{{ object_verbose_name_plural }}</span>
+                    in the Database? This action cannot be undone.
+                {% endblocktrans %}
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center p-6 space-x-3 border-t">
+                <form method="post" action="{{ delete_all_url }}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 
+                                   font-medium rounded-lg text-sm px-5 py-2.5">
+                        {% trans 'Yes, I am sure' %}
+                    </button>
+                </form>
+
+                <button type="button"
+                        class="text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300 
+                               font-medium rounded-lg text-sm px-5 py-2.5"
+                        data-modal-hide="alert_delete_all_modal">
+                    {% trans 'No, cancel' %}
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endif %}

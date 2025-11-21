@@ -1,0 +1,19 @@
+<div class="overflow-x-auto my-4 rounded-lg border border-gray-200 bg-white">
+  <table class="w-full text-sm text-left text-gray-700">
+    <tbody>
+      {% for field, val in object %}
+        <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+          <!-- Field name -->
+          <th class="w-1/5 font-medium text-gray-900 align-top py-3 px-4">
+            {{ field }}
+          </th>
+
+          <!-- Field value -->
+          <td class="py-3 px-4 text-gray-800">
+            {{ val|default:"—" }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

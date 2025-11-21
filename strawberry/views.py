@@ -20,6 +20,7 @@ from django_tables2.views import SingleTableMixin
 from django_tables2 import RequestConfig, tables
 
 from .tables import BaseTable
+from .conf import UI
 
 
 class BaseCrudView(SingleTableMixin, CRUDView):
@@ -54,6 +55,14 @@ class BaseCrudView(SingleTableMixin, CRUDView):
     table_class = None  # Each subview must define the table to be used
 
 
+    def __init__(self, *args, **kwargs):   
+        super().__init__(*args, **kwargs)
+        # the following templates are attributes because we need them for django-tables2
+        self.template_list_change_multiple_modal = self.get_template_partial("list", "change_multiple_modal")
+        self.template_list_delete_multiple_modal = self.get_template_partial("list", "delete_multiple_modal")
+
+
+
     def get_template_names(self):
         """
         Returns a list of template names to use when rendering the response.
@@ -63,7 +72,9 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         If `.template_name` is not specified, uses the
         "{app_label}/{model_name}{template_name_suffix}.html" model template
         pattern, with the fallback to the
-        "strawberry/object{template_name_suffix}.html" default templates.
+        "strawberry/{UI}/object{template_name_suffix}.html" default templates.
+
+        {UI} is set by the UI framework to be used, DaisyUI or Flowbite
         """
         if self.template_name is not None:
             return [self.template_name]
@@ -73,6 +84,8 @@ class BaseCrudView(SingleTableMixin, CRUDView):
                 f"{self.model._meta.app_label}/"
                 f"{self.model._meta.object_name.lower()}"
                 f"{self.template_name_suffix}.html",
+                f"strawberry/{UI}/object{self.template_name_suffix}.html",
+                f"strawberry/default/object{self.template_name_suffix}.html",
                 f"strawberry/object{self.template_name_suffix}.html",
             ]
         msg = (
@@ -171,7 +184,8 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         # Candidate list
         template_candidates = [
             f"{app_label}/partial/{model_name}_{role}_{partial}.html",
-            f"strawberry/partial/object_{role}_{partial}.html",
+            f"strawberry/{UI}/partial/object_{role}_{partial}.html",
+            f"strawberry/default/partial/object_{role}_{partial}.html",
         ]
 
         # ✅ Pick the first existing template as a string
@@ -272,6 +286,8 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         context['template_list_filter'] = self.get_template_partial("list", "filter" )
         context['template_delete_modal'] = self.get_template_partial("delete", "modal")
 
+        
+
 
         if self.allow_delete_all:
             context["delete_all_url"] = Role.LIST.maybe_reverse(self)+'delete-all/'
@@ -301,8 +317,7 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         filterset_class = self.get_filterset_class()
         if filterset_class is not None:
             filterset = self.get_filterset()
-            context['form_filter'] = filterset.form  
-
+            context['form_filter'] = filterset.form       
 
         return context
     

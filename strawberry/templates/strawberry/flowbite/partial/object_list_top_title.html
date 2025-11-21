@@ -1,0 +1,72 @@
+{% load i18n %}
+
+<!-- <div x-data="{ showFilter: false }" class="w-full"> -->
+<div x-ref="filter" x-data="{ showFilter: false }">
+
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 mb-4">
+
+        <!-- Page heading -->
+        <h1 class="text-lg font-bold text-gray-800">
+            {{ object_verbose_name_plural|capfirst }} ({{ object_list.count }})
+        </h1>
+
+        {% if create_view_url %}
+        <div class="mt-3 sm:mt-0 flex items-center gap-3">
+
+            <!-- New button -->
+            <a href="{{ create_view_url }}?next={{ request.get_full_path|urlencode }}"
+               class="inline-flex items-center px-4 py-2 text-sm font-medium text-white 
+                      bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 
+                      focus:ring-blue-300">
+                {% trans 'New' %} {{ object_verbose_name }}
+            </a>
+
+            <!-- Actions dropdown -->
+            <div class="relative">
+                <button id="actionsDropdownButton"
+                        data-dropdown-toggle="actionsDropdown"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 
+                               bg-white border border-gray-300 rounded-lg hover:bg-gray-100 
+                               focus:ring-4 focus:ring-blue-300"
+                        type="button">
+                    {% trans 'Actions' %}
+                    <svg class="w-2.5 h-2.5 ml-2" aria-hidden="true" fill="none" stroke="currentColor"
+                         viewBox="0 0 10 6">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M1 1l4 4 4-4" />
+                    </svg>
+                </button>
+
+                <!-- Dropdown menu -->
+                <div id="actionsDropdown"
+                     class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-56">
+                    {% include template_top_actions %}
+                </div>
+            </div>
+
+            {% if form_filter %}
+            <!-- Filter toggle -->
+            <button type="button"
+                    @click="showFilter = !showFilter"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 
+                           bg-white border border-gray-300 rounded-lg hover:bg-gray-100 
+                           focus:ring-4 focus:ring-blue-300">
+                {% trans 'Filter' %}
+            </button>
+            {% endif %}
+
+        </div>
+        {% endif %}
+    </div>
+
+    {% if form_filter %}
+    <!-- Filter panel -->
+    <div x-show="showFilter"
+         x-transition
+         x-cloak
+         class="border border-gray-200 rounded-lg p-4 bg-white shadow-sm mt-2">
+        {% include template_list_filter %}
+    </div>
+    {% endif %}
+
+</div>

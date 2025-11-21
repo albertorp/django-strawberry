@@ -3,6 +3,8 @@ from django.utils.safestring import mark_safe
 
 import django_tables2 as tables
 
+from .conf import UI
+
 class BaseTable(tables.Table):
 
     selected = tables.CheckBoxColumn(
@@ -11,22 +13,26 @@ class BaseTable(tables.Table):
         verbose_name='',
     )
     actions = tables.TemplateColumn(
-            template_name="strawberry/partial/object_actions.html",
+            template_name=f"strawberry/{UI}/partial/object_actions.html",
+            # template_name = None,
             orderable=False, 
             verbose_name="Actions")
 
     class Meta:
         abstract = True
         sequence = ('selected', '...', 'actions') # Set in the base class to ensure the actions column is always at the end
-        template_name = "strawberry/tables2.html"
+        template = None
+        # template_name = f"strawberry/{UI}/tables2.html"
         # template_name = "strawberry/tables2_daisyui.html"
         # template_name = "strawberry/tables2_flowbite.html"
+
+    default_template_name = f"strawberry/{UI}/tables2.html"
 
     def __init__(self, *args, view=None, **kwargs):
             
         super().__init__(*args, **kwargs)
-        self.view = view
-                
+
+        self.view = view                
         if view:
             # We save the query_params to be able to use them later to redirect the user to the same page with the same parameters
             query_params = view.request.GET.copy()
@@ -39,8 +45,6 @@ class BaseTable(tables.Table):
             self.change_multiple_form = None
 
             
-
-
         model = getattr(self.Meta, "model", None)
         if not model:
             return
@@ -48,9 +52,23 @@ class BaseTable(tables.Table):
         app_label = model._meta.app_label
         model_name = model._meta.model_name
 
-        # Candidate list
+        # Set the table template
+        if not getattr(self.Meta, "template_name", None):
+            template_candidates = [
+                f"{app_label}/tables2.html",
+                f"strawberry/{UI}/tables2.html",
+                f"strawberry/default/tables2.html",
+                "strawberry/tables2.html",
+            ]
+            resolved_template = select_template(template_candidates).template.name
+            self.template_name = resolved_template
+
+
+        # Set the object actions template
         template_candidates = [
             f"{app_label}/partial/{model_name}_actions.html",
+            f"strawberry/{UI}/partial/object_actions.html",
+            f"strawberry/default/partial/object_actions.html",
             "strawberry/partial/object_actions.html",
         ]
 
@@ -58,6 +76,9 @@ class BaseTable(tables.Table):
         resolved_template = select_template(template_candidates).template.name
         self.base_columns["actions"].template_name = resolved_template
 
+
+        self.template_list_change_multiple_modal = view.template_list_change_multiple_modal
+        self.template_list_delete_multiple_modal = view.template_list_delete_multiple_modal
     
 
     def render_selected(self, value, record):

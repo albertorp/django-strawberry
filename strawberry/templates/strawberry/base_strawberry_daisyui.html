@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My App{% endblock %}</title>
+
+    <!-- Tailwind + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Flowbite Datepicker -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.0/dist/flowbite.min.js"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    
+</head>
+<body class="min-h-screen flex flex-col bg-base-100 text-base-content">
+
+    <!-- Navbar -->
+    <nav class="navbar bg-base-200 px-4 shadow">
+        <div class="flex-1">
+            <a href="" class="text-xl font-bold">MyApp</a>
+        </div>
+    </nav>
+
+    <!-- Messages  -->
+    {% block messages %}
+      
+      {% if messages %}
+        {% for message in messages %}
+          <div class="notification flex w-full justify-between alert {% if message.tags %}alert-{{ message.level_tag }}{% endif %} shadow-md rounded-none! {{ message.extra_tags }} mb-1" >
+            <div>{{ message }}</div>
+            <button class="delete"><i class="fa fa-times"></i></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+    {% endblock messages %}
+
+    <!-- Main content -->
+    <main class="flex-1 container mx-auto px-4 py-6">
+        {% block app %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-base-200 p-4 text-sm text-center">
+        <p>&copy; {{ now|date:"Y" }} MyApp. All rights reserved.</p>
+    </footer>
+
+    {% block page_js %}
+    {% endblock %}
+</body>
+</html>

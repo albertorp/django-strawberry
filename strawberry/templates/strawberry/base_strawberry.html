@@ -7,24 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My App{% endblock %}</title>
 
-    <!-- Tailwind + DaisyUI -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <!-- Tailwind + Flowbite -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    <!-- Flowbite Datepicker -->
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.0/dist/flowbite.min.js"></script>
 
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     
 </head>
-<body class="min-h-screen flex flex-col bg-base-100 text-base-content">
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+
 
     <!-- Navbar -->
-    <nav class="navbar bg-base-200 px-4 shadow">
-        <div class="flex-1">
-            <a href="" class="text-xl font-bold">MyApp</a>
+    <nav class="bg-white border-b border-gray-200 px-4 py-3 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center">
+            <a href="" class="text-xl font-bold text-gray-800">MyApp</a>
         </div>
     </nav>
 
@@ -33,9 +31,17 @@
       
       {% if messages %}
         {% for message in messages %}
-          <div class="notification flex w-full justify-between alert {% if message.tags %}alert-{{ message.level_tag }}{% endif %} shadow-md rounded-none! {{ message.extra_tags }} mb-1" >
+          <div class="flex w-full justify-between items-center p-3 mb-2 text-sm 
+                      rounded border 
+                      {% if message.tags == 'error' %}
+                        bg-red-50 text-red-800 border-red-200
+                      {% elif message.tags == 'success' %}
+                        bg-green-50 text-green-800 border-green-200
+                      {% else %}
+                        bg-blue-50 text-blue-800 border-blue-200
+                      {% endif %}">
             <div>{{ message }}</div>
-            <button class="delete"><i class="fa fa-times"></i></button>
+            <button type="button" class="ml-2 text-gray-500 hover:text-gray-700">✕</button>
           </div>
         {% endfor %}
       {% endif %}
@@ -49,11 +55,15 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer bg-base-200 p-4 text-sm text-center">
+    <footer class="bg-gray-100 border-t border-gray-200 p-4 text-sm text-center text-gray-600">
         <p>&copy; {{ now|date:"Y" }} MyApp. All rights reserved.</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
+
     {% block page_js %}
     {% endblock %}
+
+
 </body>
 </html>
