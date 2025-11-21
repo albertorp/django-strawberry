@@ -15,7 +15,7 @@
 
     <!-- Non-field errors -->
     {% if form.non_field_errors %}
-    <div class="flex p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50" role="alert">
+    <div class="flex p-4 mb-4 text-error-800 border border-error-300 rounded-lg bg-error-50" role="alert">
       <svg class="flex-shrink-0 w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" 
            fill="currentColor" viewBox="0 0 20 20">
         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm1 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1-3a1 1 0 0 1-1-1V6a1 1 0 0 1 2 0v4a1 1 0 0 1-1 1Z"/>
@@ -35,7 +35,7 @@
         <label class="block mb-2 text-sm font-medium text-gray-700">
           {{ field.label }}
           {% if field.field.required %}
-            <span class="text-red-600">*</span>
+            <span class="text-error-600">*</span>
           {% endif %}
         </label>
 
@@ -49,7 +49,7 @@
 
         <!-- Field errors -->
         {% if field.errors %}
-        <p class="mt-1 text-xs text-red-600">
+        <p class="mt-1 text-xs text-error-600">
           {{ field.errors|join:", " }}
         </p>
         {% endif %}
@@ -65,7 +65,7 @@
     <!-- Buttons -->
     <div class="flex items-center pt-2">
       <button type="submit" 
-        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 
+        class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 
                font-medium rounded-lg text-sm px-5 py-2.5 mr-3">
         {% trans 'Save' %}
       </button>

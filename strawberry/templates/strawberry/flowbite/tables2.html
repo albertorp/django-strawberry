@@ -14,7 +14,7 @@
                 class="min-w-24 text-xs font-medium text-gray-700">{% trans "Items per page:" %}</label>
 
             <select id="page_size" name="page_size"
-                class="block w-24 rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500"
+                class="block w-24 px-3 py-1.5 rounded-md border border-gray-300 text-sm focus:ring-primary-500 focus:border-primary-500"
                 onchange="this.form.submit()">
                 <option value="5"  {% if request.GET.page_size == '5' %}selected{% endif %}>5</option>
                 <option value="10" {% if request.GET.page_size == '10' or not request.GET.page_size %}selected{% endif %}>10</option>
@@ -46,7 +46,7 @@
                 <a {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}
                    class="px-3 py-1.5 text-sm rounded-md border 
                           {% if table.page.number == p %}
-                             bg-blue-600 text-white border-blue-600
+                             bg-primary-600 text-white border-primary-600
                           {% else %}
                              bg-white text-gray-700 border-gray-300 hover:bg-gray-100
                           {% endif %}">
@@ -90,7 +90,7 @@
                     
                     {% if column.orderable %}
                         <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}"
-                           class="inline-flex items-center gap-1 hover:text-blue-600">
+                           class="inline-flex items-center gap-1 hover:text-primary-600">
                             {{ column.header }}
 
                             {% if column.is_ordered %}
@@ -197,7 +197,7 @@
             </label>
 
             <select id="page_size" name="page_size"
-                class="block w-24 rounded-md border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500"
+                class="block w-24 px-3 py-1.5 rounded-md border border-gray-300 text-sm focus:ring-primary-500 focus:border-primary-500"
                 onchange="this.form.submit()">
                 <option value="5"  {% if request.GET.page_size == '5' %}selected{% endif %}>5</option>
                 <option value="10" {% if request.GET.page_size == '10' or not request.GET.page_size %}selected{% endif %}>10</option>
@@ -226,7 +226,7 @@
                 <a {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}
                    class="px-3 py-1.5 text-sm rounded-md border 
                           {% if table.page.number == p %}
-                             bg-blue-600 text-white border-blue-600
+                             bg-primary-600 text-white border-primary-600
                           {% else %}
                              bg-white text-gray-700 border-gray-300 hover:bg-gray-100
                           {% endif %}">

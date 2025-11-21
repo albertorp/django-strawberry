@@ -16,8 +16,8 @@
             <!-- New button -->
             <a href="{{ create_view_url }}?next={{ request.get_full_path|urlencode }}"
                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white 
-                      bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 
-                      focus:ring-blue-300">
+                      bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 
+                      focus:ring-primary-300">
                 {% trans 'New' %} {{ object_verbose_name }}
             </a>
 
@@ -27,7 +27,7 @@
                         data-dropdown-toggle="actionsDropdown"
                         class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 
                                bg-white border border-gray-300 rounded-lg hover:bg-gray-100 
-                               focus:ring-4 focus:ring-blue-300"
+                               focus:ring-4 focus:ring-primary-300"
                         type="button">
                     {% trans 'Actions' %}
                     <svg class="w-2.5 h-2.5 ml-2" aria-hidden="true" fill="none" stroke="currentColor"
@@ -50,7 +50,7 @@
                     @click="showFilter = !showFilter"
                     class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 
                            bg-white border border-gray-300 rounded-lg hover:bg-gray-100 
-                           focus:ring-4 focus:ring-blue-300">
+                           focus:ring-4 focus:ring-primary-300">
                 {% trans 'Filter' %}
             </button>
             {% endif %}
