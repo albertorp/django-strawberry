@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v0.1.13](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.13) - 2025-11-25
+
+<small>[Compare with v0.1.12](https://github.com/albertorp/django-strawberry/compare/v0.1.12...v0.1.13)</small>
+
+### Fixed
+
+- fix: better formatting of the table ([6a8e416](https://github.com/albertorp/django-strawberry/commit/6a8e4165b942d413acc7c6c49ac82397f8acd3fc) by Alberto Rodriguez Prieto).
+
 ## [v0.1.12](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.12) - 2025-11-21
 
 <small>[Compare with v0.1.11](https://github.com/albertorp/django-strawberry/compare/v0.1.11...v0.1.12)</small>
