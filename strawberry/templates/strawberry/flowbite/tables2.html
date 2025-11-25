@@ -7,6 +7,21 @@
     {% block pagination_top %}
     {% if table.page and table.paginator.num_pages > 1 %}
     <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
+        <!-- Item and total items -->
+         <div class="text-xs text-gray-600">
+            {% trans 'Showing' %}
+            <span class="font-medium text-sm">
+                {{ table.page.start_index }}-{{ table.page.end_index }}
+            </span>
+            {% trans 'of ' %}
+            <span>
+                {% blocktrans count table.paginator.count as total_items %}
+                    <span class="font-medium text-sm">{{ total_items }}</span> item
+                {% plural %}
+                    <span class="font-medium text-sm">{{ total_items }}</span> items
+                {% endblocktrans %}
+            </span>
+         </div>
 
         <!-- Items per page selector -->
         <form method="get" class="flex items-center gap-2">
@@ -189,7 +204,22 @@
     {% block pagination %}
     {% if table.page and table.paginator.num_pages > 1 %}
     <div class="flex flex-col sm:flex-row justify-between items-center mt-4 gap-3">
-
+        <!-- Item and total items -->
+         <div class="text-xs text-gray-600">
+            {% trans 'Showing' %}
+            <span class="font-medium text-sm">
+                {{ table.page.start_index }}-{{ table.page.end_index }}
+            </span>
+            {% trans 'of ' %}
+            <span>
+                {% blocktrans count table.paginator.count as total_items %}
+                    <span class="font-medium text-sm">{{ total_items }}</span> item
+                {% plural %}
+                    <span class="font-medium text-sm">{{ total_items }}</span> items
+                {% endblocktrans %}
+            </span>
+         </div>
+         
         <!-- Items per page selector -->
         <form method="get" class="flex items-center gap-2">
             <label for="page_size" class="min-w-24 text-xs font-medium text-gray-700">

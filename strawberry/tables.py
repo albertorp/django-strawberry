@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 
 import django_tables2 as tables
 
-from .conf import UI, checkbox_classes, UI_CHECKBOX_CLASSES
+from .conf import UI, checkbox_classes, UI_CHECKBOX_CLASSES, action_classes, th_classes
 
     
 
@@ -14,14 +14,21 @@ class BaseTable(tables.Table):
         orderable=False,
         verbose_name='',
         attrs={
+            "th": {"class": "w-8 min-w-[3rem] max-w-[3rem] text-center"},
+            "td": {"class": "w-8 min-w-[3rem] max-w-[3rem] text-center"},
             "th__input": {"class": checkbox_classes},
         }
     )
     actions = tables.TemplateColumn(
-            template_name=f"strawberry/{UI}/partial/object_actions.html",
+            template_name=f"strawberry/{UI}/partial/object_actions.html", # This will be changed in init
             # template_name = None,
             orderable=False, 
-            verbose_name="Actions")
+            verbose_name="Actions",
+            attrs={
+                    "th": {"class": action_classes},
+                }
+            )
+    
 
     class Meta:
         abstract = True
@@ -30,6 +37,13 @@ class BaseTable(tables.Table):
         # template_name = f"strawberry/{UI}/tables2.html"
         # template_name = "strawberry/tables2_daisyui.html"
         # template_name = "strawberry/tables2_flowbite.html"
+
+        # Header attributes for *all* columns
+        attrs = {
+            "th": {
+                "class": th_classes,
+            },
+        }
 
     default_template_name = f"strawberry/{UI}/tables2.html"
 
@@ -46,6 +60,15 @@ class BaseTable(tables.Table):
 
             # We also set the multiselect form is needed
             self.change_multiple_form = view.get_change_multiple_form() if view.allow_multiselect else None
+
+            # Remove the "selected" column when neither multiselect or delete_multiple are allowed
+            if not view.allow_delete_multiple and not view.allow_multiselect:
+                if "selected" in self.base_columns:
+                    del self.base_columns["selected"]
+                if "selected" in self.columns:
+                    self.columns.hide("selected")
+
+                    
         else:
             self.change_multiple_form = None
 
