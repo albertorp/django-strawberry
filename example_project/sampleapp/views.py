@@ -50,4 +50,4 @@ class SampleModelView(UserBaseCrudView):
     allow_multiselect = False
     # allow_filter = False
 
-    # table_class = SampleModelTable
+    table_class = SampleModelTable

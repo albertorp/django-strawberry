@@ -63,8 +63,10 @@ class BaseTable(tables.Table):
 
             # Remove the "selected" column when neither multiselect or delete_multiple are allowed
             if not view.allow_delete_multiple and not view.allow_multiselect:
-                if "selected" in self.base_columns:
-                    del self.base_columns["selected"]
+                print("1")
+                # 2025 12 01 This check was giving an error when using a derived BaseTable for a model
+                # if "selected" in self.base_columns:
+                #     del self.base_columns["selected"]
                 if "selected" in self.columns:
                     self.columns.hide("selected")
 
