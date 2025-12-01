@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v0.1.14](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.14) - 2025-12-01
+
+<small>[Compare with v0.1.13](https://github.com/albertorp/django-strawberry/compare/v0.1.13...v0.1.14)</small>
+
+### Fixed
+
+- fix: bug when selected was not required in the table ([4906272](https://github.com/albertorp/django-strawberry/commit/490627290b953c29d2406c2f3a3c24c71be32571) by Alberto Rodriguez Prieto).
+
 ## [v0.1.13](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.13) - 2025-11-25
 
 <small>[Compare with v0.1.12](https://github.com/albertorp/django-strawberry/compare/v0.1.12...v0.1.13)</small>
