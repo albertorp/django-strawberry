@@ -3,9 +3,8 @@ from django.utils.safestring import mark_safe
 
 import django_tables2 as tables
 
-from .conf import UI, checkbox_classes, UI_CHECKBOX_CLASSES, action_classes, th_classes
+from .conf import UI, checkbox_classes, UI_CHECKBOX_CLASSES, action_classes, th_classes, STRAWBERRY_DATE_FORMAT
 
-    
 
 class BaseTable(tables.Table):
 
@@ -49,7 +48,12 @@ class BaseTable(tables.Table):
     default_template_name = f"strawberry/{UI}/tables2.html"
 
     def __init__(self, *args, view=None, **kwargs):
-            
+        for name, col in self.base_columns.items():
+            if isinstance(col, tables.DateColumn):
+                # col.format = DATE_FORMAT
+                col.localize = False
+                col.render = lambda value, **_: value.strftime(STRAWBERRY_DATE_FORMAT) if value else ""
+
         super().__init__(*args, **kwargs)
 
         self.view = view                
@@ -64,7 +68,6 @@ class BaseTable(tables.Table):
 
             # Remove the "selected" column when neither multiselect or delete_multiple are allowed
             if not view.allow_delete_multiple and not view.allow_multiselect:
-                print("1")
                 # 2025 12 01 This check was giving an error when using a derived BaseTable for a model
                 # if "selected" in self.base_columns:
                 #     del self.base_columns["selected"]

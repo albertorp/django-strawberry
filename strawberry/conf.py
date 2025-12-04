@@ -1,6 +1,8 @@
 # strawberry/conf.py
 from django.conf import settings
 
+STRAWBERRY_DATE_FORMAT = getattr(settings, "STRAWBERRY_DATE_FORMAT", "%Y-%m-%d")
+
 UI = getattr(settings, "STRAWBERRY_UI", "default")
 
 
