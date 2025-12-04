@@ -32,6 +32,7 @@ class BaseTable(tables.Table):
 
     class Meta:
         abstract = True
+        row_attrs = {"id": lambda record: "row"+str(record.pk)}
         sequence = ('selected', '...', 'actions') # Set in the base class to ensure the actions column is always at the end
         template = None
         # template_name = f"strawberry/{UI}/tables2.html"
@@ -95,6 +96,7 @@ class BaseTable(tables.Table):
 
 
         # Set the object actions template
+        # TODO Change this to allow to specify it also via an attribute in the child class
         template_candidates = [
             f"{app_label}/partial/{model_name}_actions.html",
             f"strawberry/{UI}/partial/object_actions.html",
