@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v0.1.15](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.15) - 2025-12-04
+
+<small>[Compare with v0.1.14](https://github.com/albertorp/django-strawberry/compare/v0.1.14...v0.1.15)</small>
+
+### Fixed
+
+- fix: object id in every row and fixed the top title ([220324a](https://github.com/albertorp/django-strawberry/commit/220324a1783bb02a10b4288c183a3459581579fe) by Alberto Rodriguez Prieto).
+
 ## [v0.1.14](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.14) - 2025-12-01
 
 <small>[Compare with v0.1.13](https://github.com/albertorp/django-strawberry/compare/v0.1.13...v0.1.14)</small>
