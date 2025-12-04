@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v0.1.16](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.16) - 2025-12-04
+
+<small>[Compare with v0.1.15](https://github.com/albertorp/django-strawberry/compare/v0.1.15...v0.1.16)</small>
+
+### Fixed
+
+- fix: setting to change dates formatting in the table ([c2da9a3](https://github.com/albertorp/django-strawberry/commit/c2da9a331159095b3f9480fb4c8d96e1e2a83be9) by Alberto Rodriguez Prieto).
+
 ## [v0.1.15](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.15) - 2025-12-04
 
 <small>[Compare with v0.1.14](https://github.com/albertorp/django-strawberry/compare/v0.1.14...v0.1.15)</small>
