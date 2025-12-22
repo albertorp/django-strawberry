@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v0.1.17](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.17) - 2025-12-22
+
+<small>[Compare with v0.1.16](https://github.com/albertorp/django-strawberry/compare/v0.1.16...v0.1.17)</small>
+
+### Fixed
+
+- fix: added flags to allow edit and detail in the actions ([8ed4ca3](https://github.com/albertorp/django-strawberry/commit/8ed4ca3367a3d53803ed013fb92af51dff63772a) by Alberto Rodriguez Prieto).
+
 ## [v0.1.16](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.16) - 2025-12-04
 
 <small>[Compare with v0.1.15](https://github.com/albertorp/django-strawberry/compare/v0.1.15...v0.1.16)</small>
