@@ -44,6 +44,8 @@ class SampleModelView(UserBaseCrudView):
     # filterset_class = SampleFilter
     # form_multiselect_class = SampleModelChangeMultipleForm
 
+    # allow_edit = False
+    # allow_detail = False
     allow_delete = True
     allow_delete_multiple = True
     allow_delete_all = True

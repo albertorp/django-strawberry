@@ -33,6 +33,12 @@ class BaseCrudView(SingleTableMixin, CRUDView):
     
     paginate_by = 20
 
+    # Allow the user to edit items in the DB from the listview. This will be True by default
+    allow_edit = True
+
+    # Allow the user to view details of an item in the DB from the listview. This will be True by default
+    allow_detail = True
+
     # Allow the user to delete items in the DB from the listview
     allow_delete = False
 
@@ -132,7 +138,8 @@ class BaseCrudView(SingleTableMixin, CRUDView):
 
         if self.allow_filter:
             FilterSetClass = self.get_filterset_class()
-            self.filter = FilterSetClass(self.request.GET, queryset=queryset)
+            # v0.1.17 Passing the request and the user to the filter creation
+            self.filter = FilterSetClass(self.request.GET, queryset=queryset, user=self.request.user, request=self.request)
 
             return self.filter.qs
         else:
@@ -233,6 +240,15 @@ class BaseCrudView(SingleTableMixin, CRUDView):
                 fields = {field: ["exact"] for field in allowed_fields}
                 form = AutoFilterForm
 
+            def __init__(self, *args, **kwargs):
+                # v0.1.17 We need this here since some filters need the user and request, but others don't
+                user = kwargs.pop('user', None)
+                request = kwargs.pop('request', None)
+                if not user: 
+                    user = request.user
+                    
+                super().__init__(*args, **kwargs)
+
         return AutoFilterSet
 
 
@@ -273,6 +289,17 @@ class BaseCrudView(SingleTableMixin, CRUDView):
                     fields = {field: ["exact"] for field in allowed_fields}
                     form = AutoFilterForm
 
+                def __init__(self, *args, **kwargs):
+                    # v0.1.17 We need this here since some filters need the user and request, but others don't
+                    user = kwargs.pop('user', None)
+                    request = kwargs.pop('request', None)
+                    if not user: 
+                        user = request.user
+                        
+                    super().__init__(*args, **kwargs)
+
+                
+
             filterset_class = AutoFilterSet
 
         # 3. If still no filterset (unlikely), stop here
@@ -289,6 +316,7 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         # 5. Remove unwanted fields from the filter:
         filterset.filters.pop("id", None)
         filterset.filters.pop("created_at", None)
+        filterset.filters.pop("updated_at", None)
 
         return filterset
 
@@ -297,6 +325,8 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         
         context['allow_delete'] = self.allow_delete
         context['allow_delete_all'] = self.allow_delete_all
+        context['allow_edit'] = self.allow_edit
+        context['allow_detail'] = self.allow_detail
         context['allow_delete_multiple'] = self.allow_delete_multiple
         context['allow_multiselect'] = self.allow_multiselect
         # context['allow_duplicate'] = self.allow_duplicate
