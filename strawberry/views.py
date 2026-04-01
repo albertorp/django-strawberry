@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError, RestrictedError
 from django import forms
@@ -179,10 +179,16 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         return self.render_to_response(context)
 
     def detail(self, request, *args, **kwargs):
+        if not self.allow_detail:
+            raise PermissionDenied("Editing is not allowed.")
+    
         self.fields = self.detail_fields if self.detail_fields else self.fields
         return super().detail(request, *args, **kwargs)    
     
     def show_form(self, request, *args, **kwargs):
+        if not self.allow_edit:
+            raise PermissionDenied("Editing is not allowed.")
+    
         self.fields = self.form_fields if self.form_fields else self.fields
         return super().show_form(request, *args, **kwargs)
 

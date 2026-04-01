@@ -1,8 +1,9 @@
-{% extends "strawberry/base_strawberry.html" %}
+{% extends "strawberry/base_strawberry_daisyui.html" %}
+{% load i18n %}
 
 {% block app %}
 
-<h1>Are you sure you want to delete following {{ object_verbose_name }}?</h1>
+<h1 class="text-lg font-bold">{% trans 'Are you sure you want to delete following' %} {{ object_verbose_name }}?</h1>
 <p class="mt-4">{{ object }}</p>
 
 <div class="m-8">
@@ -11,9 +12,8 @@
 
   {{ form }}
 
-  <button type="submit"
-          class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >Delete</button>
+  <button type="submit" class="btn btn-error">{% trans 'Delete' %}</button>
+  <a href="{{ request.GET.next|default:list_view_url }}" class="btn ml-2">{% trans 'Cancel' %}</a>
 </form>
 
 </div>

@@ -127,5 +127,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-STRAWBERRY_UI = "flowbite"   # other values: "daisy", "flowbite", "default"
+STRAWBERRY_UI = "daisyui"   # other values: "daisyui", "flowbite", "default"
 STRAWBERRY_DATE_FORMAT = "%Y-%m-%d" # Set the python strformat that you want to use for all Date fields

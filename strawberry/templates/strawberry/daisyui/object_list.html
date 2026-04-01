@@ -1,4 +1,4 @@
-{% extends "strawberry/base_strawberry.html" %}
+{% extends "strawberry/base_strawberry_daisyui.html" %}
 
 {% load render_table from django_tables2 %}
 
@@ -23,6 +23,10 @@
 
 {% if allow_delete %}
 {% include template_delete_modal %}
+{% endif %}
+
+{% if allow_delete_all %}
+{% include template_delete_all_modal %}
 {% endif %}
 
 </div>
