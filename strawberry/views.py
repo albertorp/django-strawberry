@@ -4,8 +4,10 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError, RestrictedError
 from django import forms
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import select_template
+from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.decorators import classonlymethod
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -35,6 +37,13 @@ class BaseCrudView(SingleTableMixin, CRUDView):
 
     # Allow the user to edit items in the DB from the listview. This will be True by default
     allow_edit = True
+
+    # When True, the edit button opens a right-side drawer via HTMX instead of navigating
+    # to a separate update page. Requires HTMX to be loaded in the project's own base template.
+    allow_edit_drawer = False
+
+    # Controls the width of the edit drawer. Accepted values: "small" (25%), "medium" (50%), "large" (75%).
+    allow_edit_drawer_width = "medium"
 
     # Allow the user to view details of an item in the DB from the listview. This will be True by default
     allow_detail = True
@@ -377,7 +386,19 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         filterset_class = self.get_filterset_class()
         if filterset_class is not None:
             filterset = self.get_filterset()
-            context['form_filter'] = filterset.form       
+            context['form_filter'] = filterset.form
+
+        # Pass the drawer flag so templates can conditionally render the HTMX button
+        context['allow_edit_drawer'] = self.allow_edit_drawer
+
+        if self.allow_edit_drawer:
+            # Resolve the drawer shell template; apps can override per-model with
+            # {app_label}/partial/{model_name}_edit_drawer.html
+            context['template_edit_drawer'] = self.get_template_partial("edit", "drawer")
+
+            # Map the width setting to a Tailwind width class for the drawer panel
+            _width_map = {"small": "w-1/4", "medium": "w-1/2", "large": "w-3/4"}
+            context['edit_drawer_width_class'] = _width_map.get(self.allow_edit_drawer_width, "w-1/2")
 
         return context
     
@@ -422,8 +443,82 @@ class BaseCrudView(SingleTableMixin, CRUDView):
         result = super().get_urls(roles)
         result.append(path(f'{cls.url_base}/delete-all/', cls.delete_all_records, name='delete_all_records'))
         result.append(path(f'{cls.url_base}/multiple-select/', cls.multiple_select, name='multiple_select'))
+        # Drawer edit endpoint — handles GET (load form) and POST (save form) for the HTMX drawer
+        result.append(path(f'{cls.url_base}/<int:pk>/update-drawer/', cls.update_drawer, name=f'{cls.url_base}-update-drawer'))
         return result
     
+
+    @classmethod
+    def update_drawer(cls, request, pk):
+        """
+        HTMX endpoint for the edit drawer.
+
+        GET  — Build the form for the given object and render it as a fragment
+               (no base template). HTMX loads this into the drawer body.
+        POST — Validate and save the form.
+               Success: return HTTP 204 + HX-Trigger header to close the drawer
+                        and signal the table to refresh.
+               Failure: re-render the form fragment with validation errors so
+                        HTMX swaps it back into the drawer body.
+        """
+        # Guard: respect the allow_edit flag set on the view class
+        if not cls.allow_edit:
+            raise PermissionDenied("Editing is not allowed.")
+
+        # Build a temporary view instance so we can call instance methods
+        # (get_object, get_form, get_context_data) that expect self.
+        instance = cls()
+        instance.setup(request)
+
+        # Set kwargs so get_object() can resolve the pk from the URL
+        lookup_kwarg = instance.lookup_url_kwarg or instance.lookup_field
+        instance.kwargs = {lookup_kwarg: pk}
+
+        # Role.UPDATE ensures get_form_class() and get_context_data()
+        # behave as they would on a normal update view.
+        instance.role = Role.UPDATE
+        instance.template_name_suffix = "_form"
+
+        # Use form_fields if defined, otherwise fall back to the general fields list
+        instance.fields = cls.form_fields if cls.form_fields else cls.fields
+
+        # Fetch the object; UserBaseCrudView.get_queryset() will scope this to
+        # the current user automatically, so unauthorised access returns 404.
+        instance.object = instance.get_object()
+
+        # Resolve the form-fragment template via the existing partial system.
+        # Apps can override per-model with {app_label}/partial/{model_name}_form_drawer.html
+        template_name = instance.get_template_partial("form", "drawer")
+
+        if request.method == "GET":
+            # Pass the existing DB record as `instance` so the form is pre-populated
+            # with the object's current values. Without this, UserBaseCrudView.get_form()
+            # would create a blank new model instance and all fields would be empty.
+            form = instance.get_form(instance=instance.object)
+            context = instance.get_context_data(form=form, object=instance.object)
+            return TemplateResponse(request, template_name, context)
+
+        # POST: bind the form to the submitted data AND the existing object so that
+        # save() updates the record rather than creating a new one.
+        form = instance.get_form(data=request.POST, files=request.FILES, instance=instance.object)
+        if form.is_valid():
+            instance.object = form.save()
+            messages.success(
+                request,
+                _(f"{cls.model.__name__} record successfully updated: {instance.object}")
+            )
+            # HTTP 204 = no content to swap, so HTMX leaves the DOM untouched.
+            # HX-Trigger fires a browser custom event ("drawerSaveSuccess") that
+            # Alpine.js listens for on object_list.html to close the drawer and
+            # trigger the table refresh.
+            response = HttpResponse(status=204)
+            response["HX-Trigger"] = "drawerSaveSuccess"
+            return response
+        else:
+            # Re-render the fragment with errors; HTMX swaps it into the drawer body
+            context = instance.get_context_data(form=form, object=instance.object)
+            return TemplateResponse(request, template_name, context)
+
 
     def process_deletion(self, request, *args, **kwargs):
         obj = self.get_object()

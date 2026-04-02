@@ -88,6 +88,34 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!--
+      STRAWBERRY — HTMX (required for allow_edit_drawer = True):
+      HTMX and the CSRF listener below are included here for the package's own
+      demo base template. If you use your own project base template instead,
+      add these two snippets there and remove them from here:
+
+        <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+        <script>
+          document.addEventListener('htmx:configRequest', function(evt) {
+            evt.detail.headers['X-CSRFToken'] =
+              document.cookie.match(/csrftoken=([^;]+)/)?.[1] ?? '';
+          });
+        </script>
+
+      Alpine.js is already included above — do not add it a second time.
+    -->
+    <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+    <script>
+      /* Pass the CSRF token on every HTMX request so Django accepts POST submissions */
+      document.addEventListener('htmx:configRequest', function(evt) {
+        evt.detail.headers['X-CSRFToken'] =
+          document.cookie.match(/csrftoken=([^;]+)/)?.[1] ?? '';
+      });
+    </script>
+
+    <!-- Override this block in your own base template to add extra <head> content -->
+    {% block extra_head %}{% endblock %}
+
     <style>
       /* Ensure the datepicker dropdown sits above everything */
       .datepicker-dropdown {

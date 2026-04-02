@@ -51,5 +51,7 @@ class SampleModelView(UserBaseCrudView):
     allow_delete_all = True
     allow_multiselect = False
     # allow_filter = False
+    allow_edit_drawer = True
+    allow_edit_drawer_width = "small"   # "small" | "medium" | "large"
 
     table_class = SampleModelTable

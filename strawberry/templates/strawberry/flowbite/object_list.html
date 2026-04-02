@@ -7,13 +7,38 @@
 
 {% block app %}
 
-<!-- <div x-data="{ recordId: null, recordName: null }"
-     x-init="window.openDeleteModal = () => { $dispatch('open-delete-modal') }"> -->
-<div>
+<!--
+  Alpine x-data holds shared state for the delete modal (recordId/recordName)
+  and the edit drawer (drawerOpen). The @drawer-save-success listener reacts
+  to the HX-Trigger header sent by update_drawer() after a successful save.
+-->
+<div x-data="{
+    recordId: null,
+    recordName: '',
+    drawerOpen: false,
+    openEditDrawer() { this.drawerOpen = true; },
+    closeDrawer() { this.drawerOpen = false; }
+}"
+@drawer-save-success.window="
+    closeDrawer();
+    htmx.trigger('#object-table-container', 'refreshTable')
+">
+
 {% include template_top_title %}
 
 {% if object_list %}
-    <div class="my-8">
+    <!--
+      hx-get refetches the current page URL (preserving filters/sort/pagination).
+      hx-select extracts only this element from the full response so the rest
+      of the page is untouched. 'refreshTable' is dispatched by Alpine after
+      a successful drawer save.
+    -->
+    <div id="object-table-container" class="my-8"
+         hx-get="{{ request.get_full_path }}"
+         hx-trigger="refreshTable"
+         hx-target="#object-table-container"
+         hx-swap="outerHTML"
+         hx-select="#object-table-container">
       {% render_table table %}
     </div>
 {% else %}
@@ -26,13 +51,13 @@
 {% include template_delete_modal %}
 {% endif %}
 
-
-
 {% if allow_delete_all %}
 {% include template_delete_all_modal %}
 {% endif %}
 
-
+{% if allow_edit_drawer %}
+  {% include template_edit_drawer %}
+{% endif %}
 
 </div>
 

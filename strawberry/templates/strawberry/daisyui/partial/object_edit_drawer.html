@@ -1,0 +1,53 @@
+{% load i18n %}
+
+<!--
+  Edit drawer shell — two sibling elements both driven by drawerOpen.
+  They must be siblings (not parent/child) so each animates independently:
+  Alpine only processes x-transition on the element that owns x-show.
+  A parent hiding instantly would cut off a child's in-progress animation.
+
+  1. Backdrop  — fades in/out (opacity only)
+  2. Panel     — slides in/out from the right + subtle opacity fade
+-->
+
+<!-- Backdrop: semi-transparent overlay, fades in on open and out on close -->
+<div class="fixed inset-0 z-40 bg-black/50"
+     x-show="drawerOpen"
+     x-cloak
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @click="closeDrawer()"></div>
+
+<!-- Panel: slides in from the right with a slight fade for depth -->
+<div class="fixed inset-y-0 right-0 z-50 {{ edit_drawer_width_class }} bg-base-100 shadow-xl flex flex-col"
+     x-show="drawerOpen"
+     x-cloak
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="translate-x-full opacity-0"
+     x-transition:enter-end="translate-x-0 opacity-100"
+     x-transition:leave="transition ease-in duration-200"
+     x-transition:leave-start="translate-x-0 opacity-100"
+     x-transition:leave-end="translate-x-full opacity-0">
+
+  <!-- Drawer header -->
+  <div class="flex items-center justify-between p-4 border-b border-base-300">
+    <h3 class="text-base font-semibold">{% trans "Edit" %}</h3>
+    <!-- Close button — same effect as clicking the backdrop -->
+    <button type="button"
+            class="btn btn-ghost btn-sm btn-circle"
+            @click="closeDrawer()">
+      ✕
+    </button>
+  </div>
+
+  <!-- Drawer body — HTMX loads the form fragment here when the edit button is clicked -->
+  <div id="edit-drawer-body"
+       class="flex-1 overflow-y-auto p-4">
+    <!-- Populated by HTMX on edit button click; empty until then -->
+  </div>
+
+</div>

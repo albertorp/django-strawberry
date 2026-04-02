@@ -1,0 +1,81 @@
+{% load i18n %}
+
+<!--
+  Edit form fragment — rendered inside the drawer body, not as a full page.
+  This template is loaded via HTMX on GET and re-rendered on a failed POST.
+  hx-post targets the same update-drawer endpoint so HTMX swaps validation
+  errors back in without closing the drawer or doing a full page reload.
+-->
+<form method="POST"
+      {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}
+      hx-post="{{ list_view_url }}{{ object.pk }}/update-drawer/"
+      hx-target="#edit-drawer-body"
+      hx-swap="innerHTML">
+
+  {% csrf_token %}
+
+  <!-- Non-field errors (e.g. unique_together violations) -->
+  {% if form.non_field_errors %}
+  <div class="flex p-4 mb-4 text-sm text-error-800 border border-error-300 rounded-lg bg-error-50"
+       role="alert">
+    <svg class="flex-shrink-0 w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm1 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm-1-3a1 1 0 0 1-1-1V6a1 1 0 0 1 2 0v4a1 1 0 0 1-1 1Z"/>
+    </svg>
+    <div>
+      {% for error in form.non_field_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Form fields — single-column layout (drawer is narrower than a full page form) -->
+  <div class="grid grid-cols-1 gap-4 mb-6">
+    {% for field in form %}
+    <div class="w-full">
+
+      <!-- Label with required indicator -->
+      <label class="block mb-2 text-sm font-medium text-gray-700">
+        {{ field.label }}
+        {% if field.field.required %}
+          <span class="text-error-600">*</span>
+        {% endif %}
+      </label>
+
+      <!-- Field input — CSS classes applied by FlowbiteFormMixin on the view -->
+      {{ field }}
+
+      <!-- Optional help text shown below the input -->
+      {% if field.help_text %}
+        <p class="mt-1 text-xs text-gray-500">{{ field.help_text }}</p>
+      {% endif %}
+
+      <!-- Inline field-level validation errors -->
+      {% if field.errors %}
+        <p class="mt-1 text-xs text-error-600">{{ field.errors|join:", " }}</p>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Action buttons -->
+  <div class="flex items-center gap-3 pt-2">
+    <button type="submit"
+            class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-300
+                   font-medium rounded-lg text-sm px-5 py-2.5">
+      {% trans "Save" %}
+    </button>
+    <!--
+      Cancel closes the drawer without saving; reaches up the Alpine scope
+      to call closeDrawer() which sets drawerOpen = false.
+    -->
+    <button type="button"
+            class="text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-4 focus:ring-gray-300
+                   font-medium rounded-lg text-sm px-5 py-2.5"
+            @click="closeDrawer()">
+      {% trans "Cancel" %}
+    </button>
+  </div>
+
+</form>
