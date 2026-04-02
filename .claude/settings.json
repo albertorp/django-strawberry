@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import inspect; from neapolitan.views import CRUDView; print\\(inspect.getsource\\(CRUDView.get_form_class\\)\\)\")",
+      "Bash(python3 -c \"import inspect; from neapolitan.views import CRUDView; print\\(inspect.getsource\\(CRUDView.get_context_data\\)\\)\")",
+      "Bash(python3 -c \"import inspect; from neapolitan.views import CRUDView; print\\(CRUDView.url_base\\)\")",
+      "Bash(python3 -c \"import inspect; import django_tables2; from django_tables2.templatetags.django_tables2 import render_table; print\\(inspect.getsource\\(render_table\\)\\)\")"
+    ]
+  }
+}
