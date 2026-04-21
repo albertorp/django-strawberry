@@ -1,2 +1,2 @@
 default_app_config = "strawberry.apps.StrawberryConfig"
-__version__ = "0.1.19"
+__version__ = "0.1.19a"
