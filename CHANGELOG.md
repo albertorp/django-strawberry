@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## Unreleased
+
+<small>[Compare with latest](https://github.com/albertorp/django-strawberry/compare/v0.1.19...HEAD)</small>
+
+<!-- insertion marker -->
+
 ## [v0.1.19](https://github.com/albertorp/django-strawberry/releases/tag/v0.1.19) - 2026-04-21
 
 <small>[Compare with v0.1.18](https://github.com/albertorp/django-strawberry/compare/v0.1.18...v0.1.19)</small>
