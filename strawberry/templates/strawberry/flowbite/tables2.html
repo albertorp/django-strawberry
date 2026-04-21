@@ -50,7 +50,7 @@
 
             {# PREVIOUS #}
             {% if table.page.has_previous %}
-            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}"
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.previous_page_number %}"
                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100">
                &laquo; {% trans "previous" %}
             </a>
@@ -58,7 +58,7 @@
 
             {# PAGE RANGE #}
             {% for p in table.page|table_page_range:table.paginator %}
-                <a {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}
+                <a {% if p != '...' %}href="{% querystring_replace table.prefixed_page_field=p %}"{% endif %}
                    class="px-3 py-1.5 text-sm rounded-md border 
                           {% if table.page.number == p %}
                              bg-primary-600 text-white border-primary-600
@@ -71,7 +71,7 @@
 
             {# NEXT #}
             {% if table.page.has_next %}
-            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}"
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.next_page_number %}"
                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100">
                {% trans "next" %} &raquo;
             </a>
@@ -104,7 +104,7 @@
                     class="px-4 py-3 font-semibold text-xs border-b border-gray-200 {% if forloop.last %}text-right{% endif %}">
                     
                     {% if column.orderable %}
-                        <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}"
+                        <a href="{% querystring_replace table.prefixed_order_by_field=column.order_by_alias.next %}"
                            class="inline-flex items-center gap-1 hover:text-primary-600">
                             {{ column.header }}
 
@@ -246,14 +246,14 @@
         <div class="inline-flex items-center space-x-1">
 
             {% if table.page.has_previous %}
-            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}"
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.previous_page_number %}"
                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100">
                &laquo; {% trans 'previous' %}
             </a>
             {% endif %}
 
             {% for p in table.page|table_page_range:table.paginator %}
-                <a {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}
+                <a {% if p != '...' %}href="{% querystring_replace table.prefixed_page_field=p %}"{% endif %}
                    class="px-3 py-1.5 text-sm rounded-md border 
                           {% if table.page.number == p %}
                              bg-primary-600 text-white border-primary-600
@@ -265,7 +265,7 @@
             {% endfor %}
 
             {% if table.page.has_next %}
-            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}"
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.next_page_number %}"
                class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-100">
                {% trans 'next' %} &raquo;
             </a>

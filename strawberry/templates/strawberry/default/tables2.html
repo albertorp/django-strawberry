@@ -28,7 +28,7 @@
         <div class="join">
             {% if table.page.has_previous %}
             {% block pagination_top.previous %}
-            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}" 
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.previous_page_number %}" 
             class="join-item btn btn-sm">
             &laquo; {% trans 'previous' %}
             </a>
@@ -38,7 +38,7 @@
             {% block pagination_top.range %}
             {% for p in table.page|table_page_range:table.paginator %}
             <a class="join-item btn btn-sm {% if table.page.number == p %}btn-active{% endif %}"
-            {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}>
+            {% if p != '...' %}href="{% querystring_replace table.prefixed_page_field=p %}"{% endif %}>
             {{ p }}
             </a>
             {% endfor %}
@@ -46,7 +46,7 @@
 
             {% if table.page.has_next %}
             {% block pagination_top.next %}
-            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}" 
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.next_page_number %}" 
             class="join-item btn btn-sm">
             {% trans 'next' %} &raquo;
             </a>
@@ -73,7 +73,7 @@
         {% for column in table.columns %}
         <th {{ column.attrs.th.as_html }} scope="col" class="text-sm font-semibold text-neutral {% if forloop.last %}text-right{% endif %}">
           {% if column.orderable %}
-          <a href="{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}"
+          <a href="{% querystring_replace table.prefixed_order_by_field=column.order_by_alias.next %}"
              class="flex items-center gap-1 hover:text-primary transition-colors">
             {{ column.header }}
             {% if column.is_ordered %}
@@ -188,7 +188,7 @@
         <div class="join">
             {% if table.page.has_previous %}
             {% block pagination.previous %}
-            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}" 
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.previous_page_number %}" 
             class="join-item btn btn-sm">
             &laquo; {% trans 'previous' %}
             </a>
@@ -198,7 +198,7 @@
             {% block pagination.range %}
             {% for p in table.page|table_page_range:table.paginator %}
             <a class="join-item btn btn-sm {% if table.page.number == p %}btn-active{% endif %}"
-            {% if p != '...' %}href="{% querystring table.prefixed_page_field=p %}"{% endif %}>
+            {% if p != '...' %}href="{% querystring_replace table.prefixed_page_field=p %}"{% endif %}>
             {{ p }}
             </a>
             {% endfor %}
@@ -206,7 +206,7 @@
 
             {% if table.page.has_next %}
             {% block pagination.next %}
-            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}" 
+            <a href="{% querystring_replace table.prefixed_page_field=table.page.next_page_number %}" 
             class="join-item btn btn-sm">
             {% trans 'next' %} &raquo;
             </a>
